@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Pierpaolo Iannicelli | Full Stack Developer · Cloud Engineer</title>
   <meta name="description" content="Portfolio di Pierpaolo Iannicelli: full stack developer, software engineer e cloud engineer.">
   <meta name="theme-color" content="#060608">
@@ -16,13 +16,13 @@
   <div class="outer-background" aria-hidden="true">
   <video
     id="outer-background-video"
-    autoplay
     muted
     loop
     playsinline
-    preload="auto"
+    preload="none"
+    tabindex="-1"
   >
-    <source src="background-esterno.mp4" type="video/mp4">
+    <source data-src="background-esterno.mp4" type="video/mp4">
   </video>
 </div>
 
@@ -50,16 +50,16 @@
             <div class="display-notch laptop-decoration" aria-hidden="true"><span></span></div>
             <div class="macbook-screen" id="portfolio-screen">
               <div class="site-background" aria-hidden="true">
-                <video id="site-background-video" muted loop playsinline preload="auto" poster="video-poster.jpg" tabindex="-1">
-                  <source src="33628-397860881_medium.mp4" type="video/mp4">
+                <video id="site-background-video" muted loop playsinline preload="none" poster="video-poster.jpg" tabindex="-1">
+                  <source data-src="33628-397860881_medium.mp4" type="video/mp4">
                 </video>
               </div>
 
   <header class="localnav">
     <div class="localnav-inner">
-      <a href="#home" class="">Pierpaolo Iannicelli</a>
-      <button class="menu-btn" aria-label="Apri menu" aria-controls="menu" aria-expanded="false"><span></span><span></span></button>
-      <nav id="menu">
+      <a href="#home" class="brand">Pierpaolo Iannicelli</a>
+      <button type="button" class="menu-btn" aria-label="Apri menu" aria-controls="menu" aria-expanded="false"><span></span><span></span></button>
+      <nav id="menu" aria-label="Navigazione principale">
         <a href="#chi-sono">Chi sono</a>
         <a href="#progetti">I miei progetti</a>
         <a href="#contatti" class="pill">Contattami</a>
@@ -108,7 +108,7 @@
         <div class="about-cols">
           <p class="reveal">Collaboro quotidianamente con graphic designers per offrirti soluzioni web totalmente personalizzate.</p>
         </div>
-
+      </div>
     </section>
 
     <!-- PROGETTI -->
@@ -123,6 +123,8 @@
           <p class="reveal">Un piccolo assaggio di progetti reali, il prossimo potrebbe essere il tuo.</p>
         </div>
 
+      </div>
+
       <div class="carousel-wrap reveal">
         <div class="carousel" id="carousel" tabindex="0" aria-label="Elenco progetti, scorri in orizzontale">
 
@@ -130,7 +132,7 @@
           <a class="project" href="https://iannicellipierpaolo.github.io/TrattoriaDelSole/" target="_blank" rel="noopener">
             <div class="p-preview">
               <span class="p-fallback mono">Anteprima non disponibile</span>
-              <iframe src="https://iannicellipierpaolo.github.io/TrattoriaDelSole/" loading="lazy" tabindex="-1" title="Anteprima Trattoria del Sole" sandbox="allow-scripts allow-same-origin"></iframe>
+              <iframe data-src="https://iannicellipierpaolo.github.io/TrattoriaDelSole/" loading="lazy" tabindex="-1" title="Anteprima Trattoria del Sole" sandbox="allow-scripts allow-same-origin"></iframe>
                 <span class="p-shield"></span>
               </div>
               <div class="p-body">
@@ -145,7 +147,7 @@
           <a class="project" href="https://iannicellipierpaolo.github.io/Mortati-dal-1987/" target="_blank" rel="noopener">
             <div class="p-preview">
               <span class="p-fallback mono">Mortati dal 1987</span>
-              <iframe src="https://iannicellipierpaolo.github.io/Mortati-dal-1987/" loading="lazy" tabindex="-1" title="Anteprima progetto 2" sandbox="allow-scripts allow-same-origin"></iframe>
+              <iframe data-src="https://iannicellipierpaolo.github.io/Mortati-dal-1987/" loading="lazy" tabindex="-1" title="Anteprima progetto 2" sandbox="allow-scripts allow-same-origin"></iframe>
               <span class="p-shield"></span>
             </div>
             <div class="p-body">
@@ -160,7 +162,7 @@
           <a class="project" href="https://iannicellipierpaolo.github.io/Dante-Osteria.tipica.calabrese/" target="_blank" rel="noopener">
             <div class="p-preview">
               <span class="p-fallback mono">Dante - Osteria tipica calabrese</span>
-              <iframe src="https://iannicellipierpaolo.github.io/Dante-Osteria.tipica.calabrese/" loading="lazy" tabindex="-1" title="Anteprima progetto 3" sandbox="allow-scripts allow-same-origin"></iframe>
+              <iframe data-src="https://iannicellipierpaolo.github.io/Dante-Osteria.tipica.calabrese/" loading="lazy" tabindex="-1" title="Anteprima progetto 3" sandbox="allow-scripts allow-same-origin"></iframe>
               <span class="p-shield"></span>
             </div>
             <div class="p-body">
@@ -178,8 +180,8 @@
         <div class="car-bar wrap">
           <div class="progress"><span id="progress"></span></div>
           <div class="car-ctrl">
-            <button id="prev" aria-label="Progetto precedente">‹</button>
-            <button id="next" aria-label="Progetto successivo">›</button>
+            <button type="button" id="prev" aria-label="Progetto precedente">‹</button>
+            <button type="button" id="next" aria-label="Progetto successivo">›</button>
           </div>
         </div>
       </div>
@@ -229,6 +231,15 @@
     </div>
   </div>
 
+  <noscript>
+    <style>
+      .menu-btn { display: none !important; }
+      #menu { position: static; visibility: visible; opacity: 1; max-height: none;
+        flex-direction: row; flex-wrap: wrap; padding: 8px 0; gap: 12px; }
+      .localnav { height: auto; }
+      .localnav-inner { flex-wrap: wrap; }
+    </style>
+  </noscript>
   <script src="script.js"></script>
 </body>
 </html>

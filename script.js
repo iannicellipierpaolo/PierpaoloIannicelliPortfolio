@@ -1,5 +1,8 @@
 const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 let reduceMotion = motionPreference.matches;
+// Include anche i telefoni ruotati e i tablet touch più piccoli.
+const mobilePreference = window.matchMedia("(max-width: 760px), (max-width: 1024px) and (pointer: coarse)");
+const mediaController = createMediaController(motionPreference, mobilePreference);
 const laptopExperience = createLaptopExperience(motionPreference);
 
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -20,6 +23,13 @@ const setMenu = open => {
 };
 btn.addEventListener("click", () => setMenu(!menu.classList.contains("open")));
 menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+document.addEventListener("pointerdown", e => {
+  if (menu.classList.contains("open") && !e.target.closest(".localnav")) setMenu(false);
+}, { passive: true });
+document.addEventListener("focusin", e => {
+  if (menu.classList.contains("open") && !e.target.closest(".localnav")) setMenu(false);
+});
+mobilePreference.addEventListener("change", () => setMenu(false));
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && menu.classList.contains("open")) {
     setMenu(false);
@@ -30,33 +40,45 @@ document.addEventListener("keydown", e => {
 /* Animazioni cicliche: compaiono in entrata, si spengono in uscita (su e giù).
    Nella hero l'effetto è una pura dissolvenza in trasparenza. */
 const SHOW_AT = 0.12;
-const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.intersectionRatio >= SHOW_AT) {
-      e.target.classList.add("visible");
-    } else if (e.intersectionRatio === 0) {
-      e.target.classList.remove("visible");
-    }
-  });
-}, { threshold: [0, SHOW_AT], rootMargin: "0px 0px -40px 0px" });
-document.querySelectorAll(".reveal").forEach(el => revealObs.observe(el));
-document.documentElement.classList.toggle("reveal-ready", !reduceMotion);
-motionPreference.addEventListener("change", e => {
-  reduceMotion = e.matches;
-  document.documentElement.classList.toggle("reveal-ready", !reduceMotion);
-});
+if ("IntersectionObserver" in window) {
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.intersectionRatio >= SHOW_AT) e.target.classList.add("visible");
+      else if (e.intersectionRatio === 0) e.target.classList.remove("visible");
+    });
+  }, { threshold: [0, SHOW_AT], rootMargin: "0px 0px -24px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => revealObs.observe(el));
+}
+function updateRevealMode() {
+  reduceMotion = motionPreference.matches;
+  document.documentElement.classList.toggle("reveal-ready",
+    !reduceMotion && !mobilePreference.matches && "IntersectionObserver" in window);
+}
+updateRevealMode();
+motionPreference.addEventListener("change", updateRevealMode);
+mobilePreference.addEventListener("change", updateRevealMode);
 
 /* Voce di menu attiva */
 const links = [...menu.querySelectorAll("a:not(.pill)")];
-const spy = new IntersectionObserver(entries => {
-  if (laptopExperience.enabled) return;
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + e.target.id));
-    }
-  });
-}, { threshold: 0.35 });
-document.querySelectorAll("main section[id]").forEach(s => spy.observe(s));
+if ("IntersectionObserver" in window) {
+  const visibleSections = new Set();
+  const spy = new IntersectionObserver(entries => {
+    if (laptopExperience.enabled) return;
+    entries.forEach(e => {
+      if (e.isIntersecting) visibleSections.add(e.target);
+      else visibleSections.delete(e.target);
+    });
+    const current = [...visibleSections].sort((a, b) =>
+      Math.abs(a.getBoundingClientRect().top - 80) - Math.abs(b.getBoundingClientRect().top - 80))[0];
+    links.forEach(link => {
+      const selected = link.hash === `#${current?.id}`;
+      link.classList.toggle("active", selected);
+      if (selected) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  }, { rootMargin: "-72px 0px -45% 0px", threshold: 0 });
+  document.querySelectorAll("main section[id]").forEach(section => spy.observe(section));
+}
 
 /* Anteprime: scala gli iframe alla larghezza della card */
 function scalePreviews() {
@@ -75,7 +97,8 @@ if ("ResizeObserver" in window) {
 /* Carosello */
 const carousel = document.getElementById("carousel");
 const progress = document.getElementById("progress");
-const step = () => carousel.querySelector(".project").offsetWidth + 24;
+const step = () => carousel.querySelector(".project").offsetWidth +
+  (parseFloat(getComputedStyle(carousel).columnGap) || 0);
 
 const carouselBehavior = () => reduceMotion ? "auto" : "smooth";
 document.getElementById("prev").addEventListener("click", () => carousel.scrollBy({ left: -step(), behavior: carouselBehavior() }));
@@ -89,8 +112,8 @@ carousel.addEventListener("keydown", e => {
 
 function updateProgress() {
   const max = carousel.scrollWidth - carousel.clientWidth;
-  const ratio = max > 0 ? carousel.scrollLeft / max : 1;
-  const visible = carousel.clientWidth / carousel.scrollWidth;
+  const ratio = max > 0 ? Math.max(0, Math.min(1, carousel.scrollLeft / max)) : 1;
+  const visible = carousel.scrollWidth > 0 ? carousel.clientWidth / carousel.scrollWidth : 1;
   progress.style.width = Math.min(100, (visible + (1 - visible) * ratio) * 100) + "%";
 }
 carousel.addEventListener("scroll", updateProgress, { passive: true });
@@ -100,7 +123,8 @@ if ("ResizeObserver" in window) new ResizeObserver(updateProgress).observe(carou
 
 let down = false, startX = 0, startLeft = 0, moved = false;
 carousel.addEventListener("pointerdown", e => {
-  if (e.pointerType !== "mouse") return;
+  moved = false;
+  if (e.pointerType !== "mouse" || e.button !== 0) return;
   down = true; moved = false; startX = e.clientX; startLeft = carousel.scrollLeft;
 });
 window.addEventListener("pointermove", e => {
@@ -114,6 +138,7 @@ window.addEventListener("pointerup", () => {
   down = false;
   carousel.classList.remove("dragging");
 });
+window.addEventListener("pointercancel", () => { down = false; moved = false; carousel.classList.remove("dragging"); });
 carousel.addEventListener("click", e => { if (moved) { e.preventDefault(); moved = false; } }, true);
 carousel.addEventListener("dragstart", e => e.preventDefault());
 
@@ -130,7 +155,7 @@ function createLaptopExperience(motionQuery) {
   const content = document.getElementById("screen-content");
   const controls = document.getElementById("intro-controls");
   const keyboard = document.getElementById("laptop-keyboard");
-  const backgroundVideo = document.getElementById("site-background-video");
+  const siteBackground = screen.querySelector(".site-background");
   const sectionLinks = [...screen.querySelectorAll('#menu a:not(.pill)')];
   const sections = [...content.querySelectorAll("main section[id]")];
   const clamp = value => Math.max(0, Math.min(1, value));
@@ -143,7 +168,7 @@ function createLaptopExperience(motionQuery) {
   let sectionPositions = [];
   let lastPhase = "";
   let canInteract = true;
-  let videoRequested = false;
+  let keyboardBuilt = false;
 
   // File sfalsate, modificatori larghi e frecce a T rovesciata.
   // La tastiera è decorativa; il contenuto del display è il sito reale.
@@ -155,44 +180,38 @@ function createLaptopExperience(motionQuery) {
     [["shift", 2.25], "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", ["shift", 2.25]],
     ["fn", "control", "option", ["⌘", 1.25], ["", 5, "space-key"], ["⌘", 1.25], "option", ["arrows", 3]]
   ];
-  keyboardRows.forEach((keys, index) => {
-    const row = document.createElement("div");
-    row.className = `keyboard-row${index === 0 ? " function-row" : ""}`;
-    keys.forEach(spec => {
-      const [label, width = 1, className = ""] = Array.isArray(spec) ? spec : [spec];
-      const key = document.createElement("span");
-      key.style.setProperty("--key-unit", width);
-      if (label === "arrows") {
-        key.className = "arrow-keys";
-        ["←", "↑", "↓", "→"].forEach((arrow, position) => {
-          const arrowKey = document.createElement("span");
-          arrowKey.className = `key arrow-${position}`;
-          arrowKey.textContent = arrow;
-          key.appendChild(arrowKey);
-        });
-      } else {
-        key.className = `key ${className}${label.length > 2 ? " key-word" : ""}`;
-        key.textContent = label;
-        if (label === "F" || label === "J") key.classList.add("home-key");
-      }
-      row.appendChild(key);
+  function buildKeyboard() {
+    if (keyboardBuilt) return;
+    keyboardBuilt = true;
+    keyboardRows.forEach((keys, index) => {
+      const row = document.createElement("div");
+      row.className = `keyboard-row${index === 0 ? " function-row" : ""}`;
+      keys.forEach(spec => {
+        const [label, width = 1, className = ""] = Array.isArray(spec) ? spec : [spec];
+        const key = document.createElement("span");
+        key.style.setProperty("--key-unit", width);
+        if (label === "arrows") {
+          key.className = "arrow-keys";
+          ["←", "↑", "↓", "→"].forEach((arrow, position) => {
+            const arrowKey = document.createElement("span");
+            arrowKey.className = `key arrow-${position}`;
+            arrowKey.textContent = arrow;
+            key.appendChild(arrowKey);
+          });
+        } else {
+          key.className = `key ${className}${label.length > 2 ? " key-word" : ""}`;
+          key.textContent = label;
+          if (label === "F" || label === "J") key.classList.add("home-key");
+        }
+        row.appendChild(key);
+      });
+      keyboard.appendChild(row);
     });
-    keyboard.appendChild(row);
-  });
+  }
 
   function updateVideo() {
-    const visible = !active || (metrics && window.scrollY > metrics.intro * .60);
-    const shouldPlay = !motionQuery.matches && !document.hidden && visible;
-    if (shouldPlay === videoRequested) return;
-    videoRequested = shouldPlay;
-    if (shouldPlay) {
-      // Se l'autoplay è bloccato, resta visibile il fotogramma di copertina.
-      backgroundVideo.play().catch(() => {});
-    } else {
-      backgroundVideo.pause();
-    }
+    mediaController.setInnerVisible(!active || Boolean(metrics && window.scrollY > metrics.intro * .60));
   }
-  document.addEventListener("visibilitychange", updateVideo);
 
   function offsetInContent(element) {
     let offset = 0;
@@ -264,10 +283,7 @@ function createLaptopExperience(motionQuery) {
     const progress = clamp(y / m.intro);
     const opening = ease(clamp(progress / .64));
     // Il secondo video si schiarisce mentre il computer si apre.
-root.style.setProperty(
-  "--outer-shade",
-  (0.5 * (1 - opening)).toFixed(3)
-);
+    root.style.setProperty("--outer-shade", (0.5 * (1 - opening)).toFixed(3));
     const zoom = ease(clamp((progress - .60) / .40));
     const lidHeight = mix(m.initialLidHeight, m.finalLidHeight, zoom);
     const initialHinge = m.height * (m.mobile ? .65 : .67);
@@ -364,12 +380,20 @@ root.style.setProperty(
   if ("ResizeObserver" in window) new ResizeObserver(requestMeasure).observe(content);
 
   function setMode(initial = false) {
-    const shouldEnable = !motionQuery.matches && CSS.supports("perspective", "1000px") && "ResizeObserver" in window;
+    const mobile = mobilePreference.matches;
+    root.classList.toggle("mobile-layout", mobile);
+    // Su mobile il video interno appartiene alla hero, non a uno schermo 3D.
+    const backgroundParent = mobile ? document.getElementById("home") : screen;
+    if (siteBackground.parentElement !== backgroundParent) backgroundParent.prepend(siteBackground);
+    const shouldEnable = !mobile && !motionQuery.matches &&
+      window.CSS?.supports("perspective", "1000px") && "ResizeObserver" in window;
+    if (!shouldEnable) root.style.setProperty("--outer-shade", "0");
     if (shouldEnable === active) { updateVideo(); return; }
     const oldOffset = active && metrics ? Math.max(0, window.scrollY - metrics.intro) : window.scrollY;
     active = shouldEnable;
     root.classList.toggle("laptop-enabled", active);
     if (active) {
+      buildKeyboard();
       measure();
       if (!initial) window.scrollTo({ top: metrics.intro + oldOffset, behavior: "instant" });
       else if (location.hash) goToHash(location.hash, true);
@@ -385,8 +409,105 @@ root.style.setProperty(
     updateVideo();
   }
   motionQuery.addEventListener("change", () => setMode());
+  mobilePreference.addEventListener("change", () => setMode());
   setMode(true);
   window.addEventListener("load", requestMeasure, { once: true });
   if (document.fonts?.ready) document.fonts.ready.then(requestMeasure);
   return { get enabled() { return active; } };
+}
+
+
+/* Carica i siti incorporati solo quando l'anteprima si avvicina alla vista.
+   Non avvia tre pagine esterne durante il primo caricamento sul telefono. */
+function initProjectPreviews() {
+  const frames = document.querySelectorAll(".p-preview iframe[data-src]");
+  const connection = navigator.connection;
+  if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || "")) return;
+  const load = frame => {
+    frame.src = frame.dataset.src;
+    frame.removeAttribute("data-src");
+  };
+  if (!("IntersectionObserver" in window)) { frames.forEach(load); return; }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      load(entry.target);
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: "120px 0px", threshold: 0 });
+  frames.forEach(frame => observer.observe(frame));
+}
+initProjectPreviews();
+
+/* Video indipendenti, caricati su richiesta. Su mobile un solo video alla volta:
+   quello interno nella hero, quello esterno nelle altre sezioni. */
+function createMediaController(motionQuery, mobileQuery) {
+  const inner = document.getElementById("site-background-video");
+  const outer = document.getElementById("outer-background-video");
+  const hero = document.getElementById("home");
+  const connection = navigator.connection;
+  const records = [inner, outer].filter(Boolean).map(video => ({ video, wanted: false, blocked: false }));
+  let innerVisible = false;
+  let heroVisible = true;
+
+  function play(record, wanted) {
+    const { video } = record;
+    if (!wanted) {
+      if (record.wanted) video.pause();
+      record.wanted = false;
+      record.blocked = false;
+      return;
+    }
+    if (record.wanted || record.blocked) return;
+    record.wanted = true;
+    video.muted = true;
+    const source = video.querySelector("source[data-src]");
+    if (source) {
+      source.src = source.dataset.src;
+      source.removeAttribute("data-src");
+      video.load();
+    }
+    const promise = video.play();
+    if (promise) promise.then(() => {
+      if (!record.wanted) video.pause();
+    }).catch(() => {
+      record.wanted = false;
+      record.blocked = true;
+    });
+  }
+
+  function update() {
+    const saveData = connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || "");
+    const allowed = !motionQuery.matches && !document.hidden && !saveData;
+    records.forEach(record => {
+      const visible = record.video === inner
+        ? (mobileQuery.matches ? heroVisible : innerVisible)
+        : (!mobileQuery.matches || !heroVisible);
+      play(record, allowed && visible);
+    });
+  }
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(entries => {
+      heroVisible = entries[0].isIntersecting;
+      update();
+    }, { threshold: 0 });
+    observer.observe(hero);
+  } else {
+    window.addEventListener("scroll", () => {
+      const rect = hero.getBoundingClientRect();
+      heroVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+      update();
+    }, { passive: true });
+  }
+  document.addEventListener("visibilitychange", update);
+  window.addEventListener("pagehide", () => records.forEach(record => play(record, false)));
+  window.addEventListener("pageshow", update);
+  motionQuery.addEventListener("change", update);
+  mobileQuery.addEventListener("change", update);
+  connection?.addEventListener?.("change", update);
+  document.addEventListener("pointerdown", () => {
+    records.forEach(record => { record.blocked = false; });
+    update();
+  }, { passive: true });
+  return { setInnerVisible(visible) { innerVisible = visible; update(); } };
 }

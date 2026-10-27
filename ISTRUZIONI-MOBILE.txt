@@ -1,0 +1,34 @@
+PORTFOLIO PI — VERSIONE MOBILE
+
+INSTALLAZIONE
+Sostituisci index.html, style.css e script.js nella cartella portfolio-PI-github.
+Conserva nella stessa cartella i media già presenti:
+- 33628-397860881_medium.mp4
+- background-esterno.mp4
+- video-poster.jpg
+Il pacchetto contiene i codici aggiornati, non i video. Non serve alcun build.
+Non usare i nomi index(1).html, style(1).css o script(1).js sul sito:
+i tre file devono mantenere i nomi esatti indicati sopra.
+
+SCELTE MOBILE
+- Fino a 760 px, oppure fino a 1024 px su dispositivi con puntatore touch:
+  portfolio a tutta larghezza e scorrimento naturale, senza la cornice 3D.
+  L'apertura del MacBook è conservata su desktop.
+- Il video interno appare nella prima sezione (hero). Il secondo resta dietro
+  alle sezioni successive. Su mobile si riproduce un solo video alla volta.
+- Video sospesi quando la scheda non è visibile. Con movimento ridotto,
+  risparmio dati o connessione 2G rilevata non vengono avviati.
+  Se il browser blocca l'autoplay, restano il poster o il fondo scuro.
+- Menu con bersagli da 48 px, chiusura al tocco esterno e supporto Escape.
+- Carosello con swipe nativo, frecce visibili e anteprime caricate su richiesta.
+- Margini per notch e barra home, contatti leggibili e orientamento orizzontale.
+- Testi e destinazioni dei collegamenti conservati. Riparati due div non chiusi.
+
+VERIFICHE ESEGUITE
+Sintassi JavaScript, parsing CSS e struttura HTML verificati.
+Test della logica in DOM simulato con dimensioni da 320 a 1024 px, desktop,
+passaggio tra modalità, menu, carosello, video, movimento ridotto e risparmio dati.
+La resa visiva e la riproduzione effettiva non sono state verificate in un browser
+reale in questo ambiente; il secondo video non era incluso negli ultimi allegati.
+Prima della pubblicazione verifica sul telefono anche Safari/Chrome, i due video,
+lo swipe delle schede e il menu in verticale e orizzontale.
