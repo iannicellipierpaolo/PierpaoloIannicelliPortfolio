@@ -1,0 +1,30 @@
+PORTFOLIO DI PIERPAOLO IANNICELLI — INTRO MACBOOK
+
+Mantieni nella stessa cartella index.html, style.css, script.js,
+33628-397860881_medium.mp4 e video-poster.jpg.
+Puoi aprire index.html nel browser oppure caricare tutti questi file sul tuo hosting.
+Non sono necessari build, npm, GSAP o modelli 3D esterni.
+
+COME FUNZIONA
+Lo scroll nativo della pagina apre il portatile realizzato in CSS 3D.
+Al termine dell'apertura, il portfolio scorre all'interno del display.
+Il contenuto è HTML reale: menu, progetti e contatti restano utilizzabili.
+Sui telefoni il display si espande per sfruttare l'altezza disponibile.
+"Torna su" ripete l'apertura.
+Il video sfuma sullo sfondo durante lo zoom finale del display e viene riprodotto
+in loop senza audio. Con movimento ridotto o autoplay bloccato resta un fotogramma statico.
+Con "Riduci movimento" attivo, o senza JavaScript, il sito usa il flusso normale.
+
+PERSONALIZZAZIONE
+In script.js, INTRO_SCREENS = 1.65 regola la lunghezza dell'apertura desktop.
+Nello stesso file, il valore 1.35 della variabile intro regola quella mobile.
+In style.css la sezione "MacBook" contiene cornice, tastiera e animazione 3D.
+Modifica testi e progetti direttamente nell'HTML, come nella versione originale.
+
+CONTENUTI ORIGINALI
+Testi, indirizzo email e progetti sono conservati.
+La palette riprende nero, rame, arancio e blu del video.
+Il MacBook ha finiture grigio metallizzato, tastiera dettagliata e logo Apple.
+Il pulsante "Salta intro" e la fascia di parole scorrevoli sono stati rimossi.
+I font Google e le anteprime dei progetti richiedono una connessione Internet;
+l'apertura del portatile funziona anche senza risorse esterne.

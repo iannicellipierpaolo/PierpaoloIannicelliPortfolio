@@ -130,6 +130,7 @@ function createLaptopExperience(motionQuery) {
   const content = document.getElementById("screen-content");
   const controls = document.getElementById("intro-controls");
   const keyboard = document.getElementById("laptop-keyboard");
+  const backgroundVideo = document.getElementById("site-background-video");
   const sectionLinks = [...screen.querySelectorAll('#menu a:not(.pill)')];
   const sections = [...content.querySelectorAll("main section[id]")];
   const clamp = value => Math.max(0, Math.min(1, value));
@@ -142,13 +143,56 @@ function createLaptopExperience(motionQuery) {
   let sectionPositions = [];
   let lastPhase = "";
   let canInteract = true;
+  let videoRequested = false;
 
-  // Tasti puramente decorativi; il contenuto del display è il sito reale.
-  for (let i = 0; i < 79; i++) {
-    const key = document.createElement("span");
-    if (i === 73) key.className = "space-key";
-    keyboard.appendChild(key);
+  // File sfalsate, modificatori larghi e frecce a T rovesciata.
+  // La tastiera è decorativa; il contenuto del display è il sito reale.
+  const keyboardRows = [
+    [["esc", 1.4], "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", ["◉", 1.1, "touch-id"]],
+    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "−", "=", ["delete", 1.5]],
+    [["tab", 1.5], "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]", "\\"],
+    [["caps lock", 1.75], "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", ["return", 1.75]],
+    [["shift", 2.25], "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", ["shift", 2.25]],
+    ["fn", "control", "option", ["⌘", 1.25], ["", 5, "space-key"], ["⌘", 1.25], "option", ["arrows", 3]]
+  ];
+  keyboardRows.forEach((keys, index) => {
+    const row = document.createElement("div");
+    row.className = `keyboard-row${index === 0 ? " function-row" : ""}`;
+    keys.forEach(spec => {
+      const [label, width = 1, className = ""] = Array.isArray(spec) ? spec : [spec];
+      const key = document.createElement("span");
+      key.style.setProperty("--key-unit", width);
+      if (label === "arrows") {
+        key.className = "arrow-keys";
+        ["←", "↑", "↓", "→"].forEach((arrow, position) => {
+          const arrowKey = document.createElement("span");
+          arrowKey.className = `key arrow-${position}`;
+          arrowKey.textContent = arrow;
+          key.appendChild(arrowKey);
+        });
+      } else {
+        key.className = `key ${className}${label.length > 2 ? " key-word" : ""}`;
+        key.textContent = label;
+        if (label === "F" || label === "J") key.classList.add("home-key");
+      }
+      row.appendChild(key);
+    });
+    keyboard.appendChild(row);
+  });
+
+  function updateVideo() {
+    const visible = !active || (metrics && window.scrollY > metrics.intro * .60);
+    const shouldPlay = !motionQuery.matches && !document.hidden && visible;
+    if (shouldPlay === videoRequested) return;
+    videoRequested = shouldPlay;
+    if (shouldPlay) {
+      // Se l'autoplay è bloccato, resta visibile il fotogramma di copertina.
+      backgroundVideo.play().catch(() => {});
+    } else {
+      backgroundVideo.pause();
+    }
   }
+  document.addEventListener("visibilitychange", updateVideo);
 
   function offsetInContent(element) {
     let offset = 0;
@@ -219,6 +263,11 @@ function createLaptopExperience(motionQuery) {
     const y = Math.max(0, window.scrollY);
     const progress = clamp(y / m.intro);
     const opening = ease(clamp(progress / .64));
+    // Il secondo video si schiarisce mentre il computer si apre.
+root.style.setProperty(
+  "--outer-shade",
+  (0.5 * (1 - opening)).toFixed(3)
+);
     const zoom = ease(clamp((progress - .60) / .40));
     const lidHeight = mix(m.initialLidHeight, m.finalLidHeight, zoom);
     const initialHinge = m.height * (m.mobile ? .65 : .67);
@@ -238,7 +287,10 @@ function createLaptopExperience(motionQuery) {
     setNumber("--hint-opacity", 1 - clamp(progress / .18));
     setNumber("--shadow-opacity", mix(.85, .2, zoom));
     setNumber("--screen-glare", .6 * (1 - opening));
+    // La stessa progressione dello zoom controlla la dissolvenza del video.
+    setNumber("--video-opacity", zoom);
     setNumber("--site-shift", shift, "px");
+    updateVideo();
 
     const interactive = progress >= .999;
     if (interactive !== canInteract) {
@@ -277,7 +329,7 @@ function createLaptopExperience(motionQuery) {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const anchor = event.target.closest('a[href^="#"]');
     if (!anchor) return;
-    const skip = anchor.hasAttribute("data-skip-intro") || anchor.classList.contains("skip-link");
+    const skip = anchor.classList.contains("skip-link");
     if (goToHash(anchor.hash, skip)) {
       event.preventDefault();
       if (location.hash !== anchor.hash) history.pushState(null, "", anchor.hash);
@@ -313,7 +365,7 @@ function createLaptopExperience(motionQuery) {
 
   function setMode(initial = false) {
     const shouldEnable = !motionQuery.matches && CSS.supports("perspective", "1000px") && "ResizeObserver" in window;
-    if (shouldEnable === active) return;
+    if (shouldEnable === active) { updateVideo(); return; }
     const oldOffset = active && metrics ? Math.max(0, window.scrollY - metrics.intro) : window.scrollY;
     active = shouldEnable;
     root.classList.toggle("laptop-enabled", active);
@@ -330,6 +382,7 @@ function createLaptopExperience(motionQuery) {
       experience.removeAttribute("data-phase");
       window.scrollTo({ top: oldOffset, behavior: "instant" });
     }
+    updateVideo();
   }
   motionQuery.addEventListener("change", () => setMode());
   setMode(true);
