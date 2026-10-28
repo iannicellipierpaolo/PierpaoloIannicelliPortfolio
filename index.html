@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body id="top">
 
@@ -28,7 +28,7 @@
 
   <a class="skip-link" href="#home">Vai al portfolio</a>
 
-  <!-- Lo scroll della pagina apre il portatile, poi muove il sito nel display. -->
+  <!-- Scroll nativo: MacBook su desktop, iPhone su mobile verticale, poi il portfolio nel display. -->
   <div class="laptop-experience" id="laptop-experience">
     <div class="laptop-stage">
       <div class="ambient-light laptop-decoration" aria-hidden="true"></div>
@@ -44,8 +44,25 @@
 
       <div class="macbook" id="macbook">
         <div class="macbook-lid">
+          <!-- Strati solidi lungo Z: lo spessore resta visibile anche di taglio. -->
+          <div class="hardware-shell laptop-decoration" aria-hidden="true"></div>
           <div class="lid-back laptop-decoration" aria-hidden="true">
+            <span class="back-wordmark">PI.</span>
+            <div class="camera-module phone-detail">
+              <span class="camera-plate"></span>
+              <span class="camera-lens lens-one"><i class="lens-barrel" style="--barrel-z:0px"></i><i class="lens-barrel" style="--barrel-z:1px"></i><i class="lens-barrel" style="--barrel-z:2px"></i><i class="lens-barrel" style="--barrel-z:3px"></i><i class="lens-ring"></i><i class="lens-glass"></i></span>
+              <span class="camera-lens lens-two"><i class="lens-barrel" style="--barrel-z:0px"></i><i class="lens-barrel" style="--barrel-z:1px"></i><i class="lens-barrel" style="--barrel-z:2px"></i><i class="lens-barrel" style="--barrel-z:3px"></i><i class="lens-ring"></i><i class="lens-glass"></i></span>
+              <span class="camera-lens lens-three"><i class="lens-barrel" style="--barrel-z:0px"></i><i class="lens-barrel" style="--barrel-z:1px"></i><i class="lens-barrel" style="--barrel-z:2px"></i><i class="lens-barrel" style="--barrel-z:3px"></i><i class="lens-ring"></i><i class="lens-glass"></i></span>
+              <span class="camera-flash"></span>
+              <span class="camera-lidar"></span>
+              <span class="camera-mic"></span>
+            </div>
           </div>
+          <div class="hardware-button button-action phone-detail laptop-decoration" aria-hidden="true"></div>
+          <div class="hardware-button button-volume-up phone-detail laptop-decoration" aria-hidden="true"></div>
+          <div class="hardware-button button-volume-down phone-detail laptop-decoration" aria-hidden="true"></div>
+          <div class="hardware-button button-power phone-detail laptop-decoration" aria-hidden="true"></div>
+          <div class="phone-bottom phone-detail laptop-decoration" aria-hidden="true"><span></span></div>
           <div class="lid-front">
             <div class="display-notch laptop-decoration" aria-hidden="true"><span></span></div>
             <div class="macbook-screen" id="portfolio-screen">
@@ -180,8 +197,8 @@
         <div class="car-bar wrap">
           <div class="progress"><span id="progress"></span></div>
           <div class="car-ctrl">
-            <button type="button" id="prev" aria-label="Progetto precedente">‹</button>
-            <button type="button" id="next" aria-label="Progetto successivo">›</button>
+            <button type="button" id="prev" aria-controls="carousel" aria-label="Progetto precedente">‹</button>
+            <button type="button" id="next" aria-controls="carousel" aria-label="Progetto successivo">›</button>
           </div>
         </div>
       </div>
@@ -240,6 +257,6 @@
       .localnav-inner { flex-wrap: wrap; }
     </style>
   </noscript>
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>

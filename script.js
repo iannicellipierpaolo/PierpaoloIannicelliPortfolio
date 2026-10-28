@@ -2,6 +2,8 @@ const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
 let reduceMotion = motionPreference.matches;
 // Include anche i telefoni ruotati e i tablet touch più piccoli.
 const mobilePreference = window.matchMedia("(max-width: 760px), (max-width: 1024px) and (pointer: coarse)");
+// In orizzontale il mobile mantiene la pagina nativa, più leggibile.
+const portraitPreference = window.matchMedia("(orientation: portrait)");
 const mediaController = createMediaController(motionPreference, mobilePreference);
 const laptopExperience = createLaptopExperience(motionPreference);
 
@@ -37,22 +39,13 @@ document.addEventListener("keydown", e => {
   }
 });
 
-/* Animazioni cicliche: compaiono in entrata, si spengono in uscita (su e giù).
-   Nella hero l'effetto è una pura dissolvenza in trasparenza. */
-const SHOW_AT = 0.12;
-if ("IntersectionObserver" in window) {
-  const revealObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.intersectionRatio >= SHOW_AT) e.target.classList.add("visible");
-      else if (e.intersectionRatio === 0) e.target.classList.remove("visible");
-    });
-  }, { threshold: [0, SHOW_AT], rootMargin: "0px 0px -24px 0px" });
-  document.querySelectorAll(".reveal").forEach(el => revealObs.observe(el));
-}
+/* Testi sempre visibili: nessun observer può riportarli a opacity:0.
+   La trasformazione del portfolio nel display rende inaffidabili le vecchie
+   soglie di entrata/uscita. Le classi restano per la compatibilità dell'HTML. */
 function updateRevealMode() {
   reduceMotion = motionPreference.matches;
-  document.documentElement.classList.toggle("reveal-ready",
-    !reduceMotion && !mobilePreference.matches && "IntersectionObserver" in window);
+  document.documentElement.classList.remove("reveal-ready");
+  document.querySelectorAll(".reveal").forEach(element => element.classList.add("visible"));
 }
 updateRevealMode();
 motionPreference.addEventListener("change", updateRevealMode);
@@ -94,60 +87,186 @@ if ("ResizeObserver" in window) {
   document.querySelectorAll(".p-preview").forEach(box => previewObserver.observe(box));
 }
 
-/* Carosello */
-const carousel = document.getElementById("carousel");
-const progress = document.getElementById("progress");
-const step = () => carousel.querySelector(".project").offsetWidth +
-  (parseFloat(getComputedStyle(carousel).columnGap) || 0);
+/* ===== Progetti: pulsanti, tastiera e trascinamento touch/mouse ===== */
+function initProjectCarousel() {
+  const carousel = document.getElementById("carousel");
+  const progress = document.getElementById("progress");
+  const prev = document.getElementById("prev");
+  const next = document.getElementById("next");
+  const cards = [...carousel.querySelectorAll(".project")];
+  let drag = null;
+  let destination = null;
+  let suppressClick = false;
+  const behavior = () => motionPreference.matches ? "auto" : "smooth";
+  const maxScroll = () => Math.max(0, carousel.scrollWidth - carousel.clientWidth);
+  const clampScroll = x => Math.max(0, Math.min(maxScroll(), x));
 
-const carouselBehavior = () => reduceMotion ? "auto" : "smooth";
-document.getElementById("prev").addEventListener("click", () => carousel.scrollBy({ left: -step(), behavior: carouselBehavior() }));
-document.getElementById("next").addEventListener("click", () => carousel.scrollBy({ left: step(), behavior: carouselBehavior() }));
-carousel.addEventListener("keydown", e => {
-  if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-    e.preventDefault();
-    carousel.scrollBy({ left: e.key === "ArrowRight" ? step() : -step(), behavior: carouselBehavior() });
+  function visualScale() {
+    // Le coordinate del dito sono visive, scrollLeft è in pixel di layout.
+    return carousel.offsetWidth ? carousel.getBoundingClientRect().width / carousel.offsetWidth || 1 : 1;
   }
-});
+  function targets() {
+    const rect = carousel.getBoundingClientRect();
+    const scale = visualScale();
+    const css = getComputedStyle(carousel);
+    const padding = parseFloat(css.scrollPaddingLeft) || parseFloat(css.paddingLeft) || 0;
+    return [...new Set(cards.map(card => Math.round(clampScroll(
+      carousel.scrollLeft + (card.getBoundingClientRect().left - rect.left) / scale - padding
+    ))))];
+  }
+  function update() {
+    const max = maxScroll();
+    const left = clampScroll(carousel.scrollLeft);
+    const ratio = max > 0 ? left / max : 1;
+    const visible = carousel.scrollWidth ? Math.min(1, carousel.clientWidth / carousel.scrollWidth) : 1;
+    progress.style.width = `${Math.min(100, (visible + (1 - visible) * ratio) * 100)}%`;
+    if (destination !== null && Math.abs(left - destination) < 2) destination = null;
+    const intended = destination ?? left;
+    prev.disabled = max <= 1 || intended <= 1;
+    next.disabled = max <= 1 || intended >= max - 1;
+  }
+  function scrollTo(left, mode = behavior()) {
+    destination = clampScroll(left);
+    carousel.scrollTo({ left: destination, behavior: mode });
+    update();
+  }
+  function navigate(direction) {
+    const left = destination ?? clampScroll(carousel.scrollLeft);
+    const stops = targets();
+    const target = direction > 0
+      ? stops.find(value => value > left + 2) ?? maxScroll()
+      : stops.filter(value => value < left - 2).at(-1) ?? 0;
+    scrollTo(target);
+  }
+  prev.addEventListener("click", () => navigate(-1));
+  next.addEventListener("click", () => navigate(1));
+  carousel.addEventListener("keydown", event => {
+    const direction = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+    if (!direction) return;
+    event.preventDefault();
+    navigate(direction);
+  });
 
-function updateProgress() {
-  const max = carousel.scrollWidth - carousel.clientWidth;
-  const ratio = max > 0 ? Math.max(0, Math.min(1, carousel.scrollLeft / max)) : 1;
-  const visible = carousel.scrollWidth > 0 ? carousel.clientWidth / carousel.scrollWidth : 1;
-  progress.style.width = Math.min(100, (visible + (1 - visible) * ratio) * 100) + "%";
+  function startDrag(id, kind, x, y) {
+    destination = null;
+    suppressClick = false;
+    // Ferma anche un eventuale scroll smooth avviato dai pulsanti.
+    carousel.scrollTo({ left: carousel.scrollLeft, behavior: "auto" });
+    drag = { id, kind, x, y, left: carousel.scrollLeft, axis: "", moved: false, scale: visualScale() };
+  }
+  function moveDrag(id, x, y) {
+    if (!drag || drag.id !== id) return false;
+    const dx = x - drag.x;
+    const dy = y - drag.y;
+    if (!drag.axis) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return false;
+      drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (drag.axis === "x") {
+        drag.moved = true;
+        carousel.classList.add("dragging");
+        if (drag.kind !== "legacy-touch") {
+          // Cattura solo dopo aver riconosciuto un gesto orizzontale.
+          try { carousel.setPointerCapture(id); } catch { /* Puntatore già rilasciato. */ }
+        }
+      }
+    }
+    if (drag.axis !== "x") return false;
+    carousel.scrollLeft = clampScroll(drag.left - dx / drag.scale);
+    update();
+    return true;
+  }
+  function endDrag(id, cancelled = false) {
+    if (!drag || drag.id !== id) return;
+    const completed = drag;
+    drag = null;
+    suppressClick = completed.moved;
+    try { if (carousel.hasPointerCapture(id)) carousel.releasePointerCapture(id); } catch { /* Touch legacy. */ }
+    if (completed.moved) {
+      const stops = targets();
+      const left = clampScroll(carousel.scrollLeft);
+      let nearest = stops.reduce((best, value) => Math.abs(value - left) < Math.abs(best - left) ? value : best, 0);
+      const origin = stops.reduce((best, value) => Math.abs(value - completed.left) < Math.abs(best - completed.left) ? value : best, 0);
+      const distance = left - completed.left;
+      // Anche uno swipe breve e deciso avanza alla card successiva.
+      const threshold = Math.max(24, carousel.clientWidth * .12);
+      if (!cancelled && nearest === origin && Math.abs(distance) > threshold) {
+        nearest = distance > 0
+          ? stops.find(value => value > origin + 2) ?? maxScroll()
+          : stops.filter(value => value < origin - 2).at(-1) ?? 0;
+      }
+      carousel.classList.remove("dragging");
+      scrollTo(nearest, cancelled ? "auto" : behavior());
+    } else carousel.classList.remove("dragging");
+  }
+
+  if ("PointerEvent" in window) {
+    carousel.addEventListener("pointerdown", event => {
+      if (event.isPrimary === false) { if (drag) endDrag(drag.id, true); return; }
+      if (event.button !== 0) return;
+      startDrag(event.pointerId, event.pointerType, event.clientX, event.clientY);
+    });
+    window.addEventListener("pointermove", event => {
+      if (moveDrag(event.pointerId, event.clientX, event.clientY) && event.cancelable) event.preventDefault();
+    }, { passive: false });
+    window.addEventListener("pointerup", event => endDrag(event.pointerId));
+    window.addEventListener("pointercancel", event => endDrag(event.pointerId, true));
+    carousel.addEventListener("lostpointercapture", event => endDrag(event.pointerId, true));
+  } else {
+    // Fallback per browser touch senza Pointer Events.
+    carousel.addEventListener("touchstart", event => {
+      if (event.touches.length !== 1) { if (drag) endDrag(drag.id, true); return; }
+      const touch = event.touches[0];
+      startDrag(touch.identifier, "legacy-touch", touch.clientX, touch.clientY);
+    }, { passive: true });
+    carousel.addEventListener("touchmove", event => {
+      if (event.touches.length !== 1) { if (drag) endDrag(drag.id, true); return; }
+      const touch = event.touches[0];
+      if (moveDrag(touch.identifier, touch.clientX, touch.clientY) && event.cancelable) event.preventDefault();
+    }, { passive: false });
+    const finishTouch = event => {
+      if (!drag) return;
+      if ([...event.changedTouches].some(touch => touch.identifier === drag.id)) endDrag(drag.id, event.type === "touchcancel");
+    };
+    carousel.addEventListener("touchend", finishTouch);
+    carousel.addEventListener("touchcancel", finishTouch);
+  }
+  window.addEventListener("blur", () => { if (drag) endDrag(drag.id, true); });
+  // Un trascinamento non deve aprire il link della card al rilascio.
+  carousel.addEventListener("click", event => {
+    if (suppressClick && event.detail !== 0) {
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClick = false;
+    }
+  }, true);
+  carousel.addEventListener("dragstart", event => event.preventDefault());
+  carousel.addEventListener("scroll", update, { passive: true });
+  // Una rotella/trackpad è una nuova scelta di navigazione, anche dopo un click.
+  carousel.addEventListener("wheel", () => { destination = null; }, { passive: true });
+  function refresh() {
+    if (drag) endDrag(drag.id, true);
+    destination = null;
+    update();
+  }
+  window.addEventListener("resize", refresh, { passive: true });
+  if ("ResizeObserver" in window) new ResizeObserver(refresh).observe(carousel);
+  if (document.fonts?.ready) document.fonts.ready.then(refresh);
+  // Solo con i gestori pronti il browser delega lo swipe orizzontale al codice.
+  carousel.classList.add("carousel-ready");
+  update();
 }
-carousel.addEventListener("scroll", updateProgress, { passive: true });
-window.addEventListener("resize", updateProgress);
-updateProgress();
-if ("ResizeObserver" in window) new ResizeObserver(updateProgress).observe(carousel);
+initProjectCarousel();
 
-let down = false, startX = 0, startLeft = 0, moved = false;
-carousel.addEventListener("pointerdown", e => {
-  moved = false;
-  if (e.pointerType !== "mouse" || e.button !== 0) return;
-  down = true; moved = false; startX = e.clientX; startLeft = carousel.scrollLeft;
-});
-window.addEventListener("pointermove", e => {
-  if (!down) return;
-  const dx = e.clientX - startX;
-  if (Math.abs(dx) > 5) { moved = true; carousel.classList.add("dragging"); }
-  carousel.scrollLeft = startLeft - dx;
-});
-window.addEventListener("pointerup", () => {
-  if (!down) return;
-  down = false;
-  carousel.classList.remove("dragging");
-});
-window.addEventListener("pointercancel", () => { down = false; moved = false; carousel.classList.remove("dragging"); });
-carousel.addEventListener("click", e => { if (moved) { e.preventDefault(); moved = false; } }, true);
-carousel.addEventListener("dragstart", e => e.preventDefault());
 
-/* ===== Apertura del MacBook e scroll del portfolio nel display =====
-   Non intercetta wheel/touch: la scrollbar è quella nativa della pagina.
-   INTRO_SCREENS regola la distanza di apertura in altezze di finestra.
-   Dopo l'apertura, 1 px di scroll muove il portfolio di 1 px. */
+/* ===== Dispositivi CSS 3D + scroll nativo =====
+   Desktop: MacBook con display spesso 7.5px. Mobile verticale: iPhone.
+   Il contenuto è unico; niente WebGL, librerie o intercettazione dei gesti.
+   Regola LAPTOP_DEPTH, PHONE_DEPTH_RATIO e le distanze INTRO_SCREENS qui. */
 function createLaptopExperience(motionQuery) {
   const INTRO_SCREENS = 1.65;
+  const PHONE_INTRO_SCREENS = 1.35;
+  const LAPTOP_DEPTH = 7.5;
+  const PHONE_DEPTH_RATIO = .078;
   const root = document.documentElement;
   const experience = document.getElementById("laptop-experience");
   const screen = document.getElementById("portfolio-screen");
@@ -155,6 +274,7 @@ function createLaptopExperience(motionQuery) {
   const content = document.getElementById("screen-content");
   const controls = document.getElementById("intro-controls");
   const keyboard = document.getElementById("laptop-keyboard");
+  const shell = experience.querySelector(".hardware-shell");
   const siteBackground = screen.querySelector(".site-background");
   const sectionLinks = [...screen.querySelectorAll('#menu a:not(.pill)')];
   const sections = [...content.querySelectorAll("main section[id]")];
@@ -162,6 +282,7 @@ function createLaptopExperience(motionQuery) {
   const mix = (a, b, t) => a + (b - a) * t;
   const ease = t => t * t * (3 - 2 * t);
   let active = false;
+  let phoneMode = false;
   let frame = 0;
   let measureFrame = 0;
   let metrics = null;
@@ -169,9 +290,8 @@ function createLaptopExperience(motionQuery) {
   let lastPhase = "";
   let canInteract = true;
   let keyboardBuilt = false;
+  let shellMode = "";
 
-  // File sfalsate, modificatori larghi e frecce a T rovesciata.
-  // La tastiera è decorativa; il contenuto del display è il sito reale.
   const keyboardRows = [
     [["esc", 1.4], "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", ["◉", 1.1, "touch-id"]],
     ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "−", "=", ["delete", 1.5]],
@@ -209,18 +329,38 @@ function createLaptopExperience(motionQuery) {
     });
   }
 
-  function updateVideo() {
-    mediaController.setInnerVisible(!active || Boolean(metrics && window.scrollY > metrics.intro * .60));
+  // Sezioni solide arrotondate lungo Z: chiudono anche gli angoli della scocca.
+  // Non usare opacity/filter/overflow:hidden sui contenitori preserve-3d:
+  // appiattirebbero tutti questi strati su un unico piano.
+  function buildShell() {
+    const mode = phoneMode ? "phone" : "laptop";
+    if (shellMode === mode) return;
+    shellMode = mode;
+    const count = phoneMode ? 22 : 10;
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+      const slice = document.createElement("span");
+      slice.className = "shell-slice";
+      const position = i / (count - 1);
+      slice.style.setProperty("--slice-z", (position - .5).toFixed(4));
+      // Una leggera smussatura alle estremità riflette la luce sul bordo.
+      slice.style.setProperty("--slice-inset", `${(Math.abs(position - .5) ** 3 * 6).toFixed(3)}px`);
+      fragment.appendChild(slice);
+    }
+    shell.replaceChildren(fragment);
   }
 
+  function updateVideo() {
+    const visible = !active || Boolean(metrics && window.scrollY > metrics.intro * .48);
+    // Sul telefono riproduci un video alla volta per limitare il carico.
+    const outerNeeded = !(active && phoneMode && visible);
+    mediaController.setInnerVisible(visible, outerNeeded);
+  }
   function offsetInContent(element) {
     let offset = 0;
-    for (let node = element; node && node !== content; node = node.offsetParent) {
-      offset += node.offsetTop;
-    }
+    for (let node = element; node && node !== content; node = node.offsetParent) offset += node.offsetTop;
     return offset;
   }
-
   function setNumber(name, value, unit = "") {
     experience.style.setProperty(name, `${value.toFixed(3)}${unit}`);
   }
@@ -232,36 +372,32 @@ function createLaptopExperience(motionQuery) {
     const oldY = window.scrollY;
     const width = document.documentElement.clientWidth;
     const height = window.innerHeight;
-    const mobile = width <= 760;
-    const deviceWidth = mobile
-      ? Math.max(240, Math.min(width - 24, height < width * .8 ? (height - 80) / .625 : width - 24))
+    const phoneRatio = 9 / 19.5;
+    const deviceWidth = phoneMode
+      ? Math.max(1, Math.min(width - 28, (height - 40) * phoneRatio))
       : Math.max(240, Math.min(1260, width * .88, (height - 96) / .625));
-    const initialLidHeight = deviceWidth * .625;
-    const finalLidHeight = mobile ? Math.max(initialLidHeight, height - 52) : initialLidHeight;
-    const bezelX = mobile ? 18 : 26; // padding + bordi
-    const bezelY = mobile ? 22 : 32;
-    const screenWidth = deviceWidth - bezelX;
-    const navHeight = screen.querySelector(".localnav").offsetHeight || 52;
-    const viewHeight = Math.max(120, finalLidHeight - bezelY - navHeight);
-    const intro = Math.round(height * (mobile ? 1.35 : INTRO_SCREENS));
-
+    const lidHeight = phoneMode ? deviceWidth / phoneRatio : deviceWidth * .625;
+    const depth = phoneMode ? Math.min(30, deviceWidth * PHONE_DEPTH_RATIO) : LAPTOP_DEPTH;
+    const intro = Math.round(height * (phoneMode ? PHONE_INTRO_SCREENS : INTRO_SCREENS));
     setNumber("--stage-height", height, "px");
     setNumber("--device-width", deviceWidth, "px");
-    setNumber("--deck-height", initialLidHeight, "px");
+    setNumber("--deck-height", lidHeight, "px");
+    setNumber("--lid-height", lidHeight, "px");
+    setNumber("--hardware-depth", depth, "px");
+    // Legge le dimensioni effettive dopo padding/bordi: niente contenuto tagliato.
+    const screenWidth = screen.clientWidth;
     setNumber("--screen-width", screenWidth, "px");
-    setNumber("--content-height", viewHeight, "px");
     screen.classList.toggle("compact-screen", screenWidth <= 860);
     screen.classList.toggle("narrow-screen", screenWidth <= 734);
-
-    // Le misure di layout non includono la trasformazione visiva del portatile.
+    const navHeight = screen.querySelector(".localnav").offsetHeight;
+    const viewHeight = Math.max(120, screen.clientHeight - navHeight);
+    setNumber("--content-height", viewHeight, "px");
     const range = Math.max(0, content.scrollHeight - viewHeight);
-    metrics = { width, height, mobile, deviceWidth, initialLidHeight, finalLidHeight, viewHeight, intro, range };
+    metrics = { width, height, phone: phoneMode, deviceWidth, lidHeight, viewHeight, intro, range };
     sectionPositions = sections.map(section => ({ id: section.id, top: offsetInContent(section) }));
     setNumber("--story-height", height + intro + range, "px");
     experience.dataset.introDistance = String(intro);
     experience.dataset.contentRange = String(Math.round(range));
-
-    // Conserva la posizione quando cambia l'orientamento o si ridimensiona la finestra.
     if (old && (old.width !== width || Math.abs(old.height - height) > 100)) {
       const nextY = oldY < old.intro
         ? oldY / old.intro * intro
@@ -270,7 +406,6 @@ function createLaptopExperience(motionQuery) {
     }
     render();
   }
-
   function requestMeasure() {
     if (active && !measureFrame) measureFrame = requestAnimationFrame(measure);
   }
@@ -282,32 +417,48 @@ function createLaptopExperience(motionQuery) {
     const y = Math.max(0, window.scrollY);
     const progress = clamp(y / m.intro);
     const opening = ease(clamp(progress / .64));
-    // Il secondo video si schiarisce mentre il computer si apre.
-    root.style.setProperty("--outer-shade", (0.5 * (1 - opening)).toFixed(3));
     const zoom = ease(clamp((progress - .60) / .40));
-    const lidHeight = mix(m.initialLidHeight, m.finalLidHeight, zoom);
-    const initialHinge = m.height * (m.mobile ? .65 : .67);
-    const finalTop = (m.height - m.finalLidHeight - 9) / 2;
     const shift = Math.max(0, Math.min(m.range, y - m.intro));
-
-    setNumber("--lid-height", lidHeight, "px");
-    setNumber("--hardware-y", mix(initialHinge - lidHeight, finalTop, zoom), "px");
-    setNumber("--lid-angle", mix(-102, 0, opening), "deg");
-    setNumber("--device-scale", mix(m.mobile ? .86 : .66, 1, zoom));
-    setNumber("--deck-angle", mix(78, 88, zoom), "deg");
-    setNumber("--deck-opacity", 1 - ease(clamp((zoom - .25) / .75)));
-    setNumber("--lip-opacity", zoom);
+    root.style.setProperty("--outer-shade", (0.5 * (1 - opening)).toFixed(3));
     setNumber("--intro-opacity", 1 - clamp(progress / .23));
     setNumber("--intro-y", -28 * clamp(progress / .23), "px");
     setNumber("--controls-opacity", 1 - clamp((progress - .72) / .28));
     setNumber("--hint-opacity", 1 - clamp(progress / .18));
-    setNumber("--shadow-opacity", mix(.85, .2, zoom));
-    setNumber("--screen-glare", .6 * (1 - opening));
-    // La stessa progressione dello zoom controlla la dissolvenza del video.
-    setNumber("--video-opacity", zoom);
+    setNumber("--shadow-opacity", mix(.85, .22, zoom));
     setNumber("--site-shift", shift, "px");
-    updateVideo();
+    // La luce scorre sul metallo e sul vetro, senza muovere il contenuto.
+    setNumber("--metal-angle", mix(115, 158, opening), "deg");
+    setNumber("--reflection-x", mix(-45, 145, opening), "%");
+    setNumber("--glass-reflection", .48 * (1 - zoom));
 
+    if (m.phone) {
+      const spin = ease(clamp(progress / .56));
+      const powerOn = ease(clamp((progress - .48) / .17));
+      const center = mix(m.height * .62, m.height / 2, zoom);
+      setNumber("--hardware-y", center - m.lidHeight / 2, "px");
+      setNumber("--device-scale", mix(.56, 1, zoom));
+      setNumber("--phone-ry", mix(-208, 0, spin), "deg");
+      setNumber("--phone-rx", mix(13, 0, spin), "deg");
+      setNumber("--phone-rz", mix(-8, 0, spin), "deg");
+      setNumber("--screen-off", 1 - powerOn);
+      setNumber("--screen-glare", .32 * (1 - powerOn));
+      setNumber("--video-opacity", powerOn);
+    } else {
+      const initialHinge = m.height * .67;
+      const finalTop = (m.height - m.lidHeight - 9) / 2;
+      setNumber("--hardware-y", mix(initialHinge - m.lidHeight, finalTop, zoom), "px");
+      setNumber("--lid-angle", mix(-102, 0, opening), "deg");
+      setNumber("--device-scale", mix(.66, 1, zoom));
+      // Inclinazione lieve: rende leggibile il bordo da 7.5px durante l'apertura.
+      setNumber("--device-yaw", mix(-12, 0, zoom), "deg");
+      setNumber("--device-roll", mix(-1.2, 0, zoom), "deg");
+      setNumber("--deck-angle", mix(78, 88, zoom), "deg");
+      setNumber("--deck-opacity", 1 - ease(clamp((zoom - .25) / .75)));
+      setNumber("--lip-opacity", zoom);
+      setNumber("--screen-glare", .5 * (1 - opening));
+      setNumber("--video-opacity", zoom);
+    }
+    updateVideo();
     const interactive = progress >= .999;
     if (interactive !== canInteract) {
       screen.inert = !interactive;
@@ -324,11 +475,9 @@ function createLaptopExperience(motionQuery) {
       else link.removeAttribute("aria-current");
     });
   }
-
   function requestRender() {
     if (active && !frame) frame = requestAnimationFrame(render);
   }
-
   function goToHash(hash, instant = false) {
     if (!active || !metrics || !hash) return false;
     let id;
@@ -340,7 +489,6 @@ function createLaptopExperience(motionQuery) {
     if (instant) render();
     return true;
   }
-
   document.addEventListener("click", event => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const anchor = event.target.closest('a[href^="#"]');
@@ -356,8 +504,6 @@ function createLaptopExperience(motionQuery) {
       }
     }
   });
-
-  // Il focus da tastiera deve mostrare i link anche se sono fuori dal display.
   content.addEventListener("focusin", event => {
     if (!active || !metrics) return;
     viewport.scrollTop = 0;
@@ -382,36 +528,52 @@ function createLaptopExperience(motionQuery) {
   function setMode(initial = false) {
     const mobile = mobilePreference.matches;
     root.classList.toggle("mobile-layout", mobile);
-    // Su mobile il video interno appartiene alla hero, non a uno schermo 3D.
-    const backgroundParent = mobile ? document.getElementById("home") : screen;
+    const shouldEnable = !motionQuery.matches &&
+      window.CSS?.supports("transform-style", "preserve-3d") &&
+      window.CSS?.supports("perspective", "1000px") && "ResizeObserver" in window &&
+      (!mobile || portraitPreference.matches);
+    const phone = Boolean(shouldEnable && mobile);
+    const backgroundParent = mobile && !shouldEnable ? document.getElementById("home") : screen;
     if (siteBackground.parentElement !== backgroundParent) backgroundParent.prepend(siteBackground);
-    const shouldEnable = !mobile && !motionQuery.matches &&
-      window.CSS?.supports("perspective", "1000px") && "ResizeObserver" in window;
     if (!shouldEnable) root.style.setProperty("--outer-shade", "0");
-    if (shouldEnable === active) { updateVideo(); return; }
+    root.classList.toggle("phone-enabled", phone);
+    root.classList.toggle("macbook-enabled", Boolean(shouldEnable && !phone));
+    const cue = document.querySelector(".scroll-cue .mono");
+    if (cue) cue.textContent = phone ? "Scorri per accendere" : "Scorri per aprire";
+    if (shouldEnable === active && phone === phoneMode) { requestMeasure(); updateVideo(); return; }
+    // Conserva il contenuto raggiunto anche passando da desktop a mobile.
+    const inIntro = active && metrics && window.scrollY < metrics.intro;
+    const introProgress = inIntro ? window.scrollY / metrics.intro : 0;
     const oldOffset = active && metrics ? Math.max(0, window.scrollY - metrics.intro) : window.scrollY;
-    active = shouldEnable;
+    active = Boolean(shouldEnable);
+    phoneMode = phone;
+    metrics = null;
     root.classList.toggle("laptop-enabled", active);
     if (active) {
-      buildKeyboard();
+      buildShell();
+      if (!phone) buildKeyboard();
       measure();
-      if (!initial) window.scrollTo({ top: metrics.intro + oldOffset, behavior: "instant" });
-      else if (location.hash) goToHash(location.hash, true);
+      if (!initial) {
+        const next = inIntro ? introProgress * metrics.intro : metrics.intro + Math.min(oldOffset, metrics.range);
+        window.scrollTo({ top: next, behavior: "instant" });
+      } else if (location.hash) goToHash(location.hash, true);
       render();
     } else {
       screen.inert = false;
       controls.inert = false;
       canInteract = true;
-      metrics = null;
       experience.removeAttribute("data-phase");
+      lastPhase = "";
       window.scrollTo({ top: oldOffset, behavior: "instant" });
     }
     updateVideo();
   }
   motionQuery.addEventListener("change", () => setMode());
   mobilePreference.addEventListener("change", () => setMode());
+  portraitPreference.addEventListener("change", () => setMode());
   setMode(true);
   window.addEventListener("load", requestMeasure, { once: true });
+  window.addEventListener("pageshow", requestMeasure);
   if (document.fonts?.ready) document.fonts.ready.then(requestMeasure);
   return { get enabled() { return active; } };
 }
@@ -439,8 +601,8 @@ function initProjectPreviews() {
 }
 initProjectPreviews();
 
-/* Video indipendenti, caricati su richiesta. Su mobile un solo video alla volta:
-   quello interno nella hero, quello esterno nelle altre sezioni. */
+/* Video caricati su richiesta. Su mobile se ne riproduce uno alla volta:
+   nel telefono 3D oppure, nel fallback, nella hero e nelle altre sezioni. */
 function createMediaController(motionQuery, mobileQuery) {
   const inner = document.getElementById("site-background-video");
   const outer = document.getElementById("outer-background-video");
@@ -448,6 +610,7 @@ function createMediaController(motionQuery, mobileQuery) {
   const connection = navigator.connection;
   const records = [inner, outer].filter(Boolean).map(video => ({ video, wanted: false, blocked: false }));
   let innerVisible = false;
+  let outerVisible = true;
   let heroVisible = true;
 
   function play(record, wanted) {
@@ -480,9 +643,10 @@ function createMediaController(motionQuery, mobileQuery) {
     const saveData = connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || "");
     const allowed = !motionQuery.matches && !document.hidden && !saveData;
     records.forEach(record => {
+      const flow = mobileQuery.matches && !document.documentElement.classList.contains("phone-enabled");
       const visible = record.video === inner
-        ? (mobileQuery.matches ? heroVisible : innerVisible)
-        : (!mobileQuery.matches || !heroVisible);
+        ? (flow ? heroVisible : innerVisible)
+        : (flow ? !heroVisible : outerVisible);
       play(record, allowed && visible);
     });
   }
@@ -509,5 +673,5 @@ function createMediaController(motionQuery, mobileQuery) {
     records.forEach(record => { record.blocked = false; });
     update();
   }, { passive: true });
-  return { setInnerVisible(visible) { innerVisible = visible; update(); } };
+  return { setInnerVisible(visible, outerNeeded = true) { innerVisible = visible; outerVisible = outerNeeded; update(); } };
 }

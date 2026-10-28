@@ -189,18 +189,11 @@ footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--d
 .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a:hover { color: var(--neon); }
 
-/* ===== Animazioni cicliche (entrata e uscita, su e giù) ===== */
-.reveal {
-  opacity: 1; transform: none;
-  transition: opacity .8s var(--ease) var(--d, 0s), transform .8s var(--ease) var(--d, 0s);
-  will-change: opacity, transform;
+/* Testi stabili durante tutto lo scroll, anche dentro i dispositivi 3D. */
+.reveal, .reveal-ready .reveal, .reveal-ready .reveal.visible,
+.hero .reveal, .reveal-ready .hero .reveal {
+  opacity: 1; transform: none; transition: none; will-change: auto;
 }
-.reveal-ready .reveal { opacity: 0; transform: translateY(32px); }
-.reveal-ready .reveal.visible { opacity: 1; transform: none; }
-
-/* Hero: solo dissolvenza in trasparenza, senza movimento dal basso */
-.hero .reveal, .reveal-ready .hero .reveal { opacity: 1; transform: none; transition: opacity 1.1s ease var(--d, 0s); will-change: opacity; }
-.hero .reveal.visible { transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -410,7 +403,7 @@ html.laptop-enabled { scroll-behavior: auto; scroll-padding-top: 0; }
 .laptop-enabled .narrow-screen .brand { font-size: .81rem; }
 .laptop-enabled .narrow-screen .contact-list a { gap: 12px; }
 .laptop-enabled .narrow-screen .contact-list span { width: 49px; font-size: .68rem; }
-.laptop-enabled .narrow-screen .car-ctrl { display: none; }
+.laptop-enabled .narrow-screen .car-ctrl { display: flex; gap: 8px; }
 @media (max-width: 760px) {
   .laptop-enabled .intro-copy { top: 22%; }
   .intro-subtitle { max-width: 255px; margin: 14px auto 0; }
@@ -454,7 +447,7 @@ html.laptop-enabled { scroll-behavior: auto; scroll-padding-top: 0; }
   #menu a { padding: 14px 0; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
   #menu a.pill { margin-top: 14px; text-align: center; border: 0; padding: 12px; }
   .contact-list span { width: 66px; }
-  .car-ctrl { display: none; }
+  .car-ctrl { display: flex; gap: 8px; }
   .hero-roles { flex-direction: column; gap: 12px; }
 }
 
@@ -649,3 +642,301 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .project:hover { transform: none; box-shadow: none; }
   .contact-list a:hover { padding-left: 0; }
 }
+
+
+/* =====================================================================
+   HARDWARE 3D — Spessore reale in CSS, metallo e vetro.
+   .laptop-enabled abilita la scena condivisa;
+   .macbook-enabled e .phone-enabled scelgono il dispositivo.
+   ===================================================================== */
+.hardware-shell, .phone-detail { display: none; }
+.laptop-enabled .laptop-experience { --hardware-depth: 7.5px; }
+.back-wordmark {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font: 600 clamp(22px, calc(var(--device-width) * .07), 64px) / 1 ui-monospace, monospace;
+  letter-spacing: -.08em; color: #45464b;
+  text-shadow: 0 1px 1px rgba(255,255,255,.5);
+}
+.laptop-enabled .macbook {
+  --hardware-radius: 22px 22px 16px 16px;
+  transform: translateX(-50%) scale(var(--device-scale, .66))
+    rotateY(var(--device-yaw, -12deg)) rotateZ(var(--device-roll, -1.2deg));
+}
+.laptop-enabled .macbook-lid {
+  /* Cesura metallica e pannelli appartengono alla stessa scena 3D. */
+  transform-style: preserve-3d;
+}
+.laptop-enabled .hardware-shell {
+  position: absolute; inset: 0; pointer-events: none;
+  transform-style: preserve-3d;
+}
+.laptop-enabled .shell-slice {
+  position: absolute; inset: var(--slice-inset, 0px);
+  border-radius: var(--hardware-radius);
+  transform: translateZ(calc(var(--hardware-depth) * var(--slice-z)));
+  /* Le sezioni sono solide e bifacciali, anche quando si vedono di taglio. */
+  background: linear-gradient(var(--metal-angle, 125deg),
+    #55575c 0%, #c4c7cc 9%, #f1f2f4 14%, #8f9299 23%,
+    #4e5158 45%, #b3b6bd 67%, #e8e9ec 76%, #6e7178 91%, #393c43 100%);
+  box-shadow: inset 0 0 0 .65px rgba(245,247,255,.7), inset 0 0 0 1.3px rgba(25,27,33,.6);
+}
+.laptop-enabled .lid-front {
+  border-radius: var(--hardware-radius);
+  transform: translateZ(calc(var(--hardware-depth) / 2 + 1px));
+  border-color: #b3b7be;
+  background: linear-gradient(var(--metal-angle, 125deg), #676a72, #17181c 12%, #08090c 53%, #3a3c43);
+  box-shadow: inset 0 0 0 1px #060709, inset 0 1px 2px rgba(255,255,255,.28), 0 18px 40px rgba(0,0,0,.35);
+}
+.laptop-enabled .lid-back {
+  border-radius: var(--hardware-radius);
+  transform: rotateY(180deg) translateZ(calc(var(--hardware-depth) / 2));
+  transform-style: preserve-3d;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 .7px, rgba(0,0,0,.018) .7px 1.4px),
+    linear-gradient(var(--metal-angle, 125deg), #686b72, #c0c3c9 24%, #878b93 48%, #bfc2c9 78%, #5e626a);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), inset 0 0 8px rgba(0,0,0,.16);
+}
+/* Vetro sopra al contenuto; il riflesso svanisce quando il sito è interattivo. */
+.laptop-enabled .lid-front::after {
+  content: ""; position: absolute; inset: 0; z-index: 110;
+  border-radius: inherit; pointer-events: none;
+  background:
+    linear-gradient(112deg, transparent 24%, rgba(232,240,255,.18) 38%, rgba(255,255,255,.48) 42%, transparent 57%);
+  background-size: 220% 100%; background-position: var(--reflection-x, -45%) 0;
+  opacity: var(--glass-reflection, .48);
+}
+.macbook-enabled .lid-front::before {
+  content: ""; position: absolute; left: 15%; right: 15%; bottom: -2px; height: 5px;
+  border-radius: 4px; transform: translateZ(1px);
+  background: linear-gradient(#303238, #9d9fa6 38%, #282a31);
+}
+
+/* ===== iPhone: esclusivamente modalità mobile, in verticale ===== */
+.phone-enabled .macbook {
+  --hardware-radius: 50px;
+  transform-origin: 50% 50%;
+  transform: translateX(-50%) scale(var(--device-scale, .56));
+}
+.phone-enabled .macbook-lid {
+  transform-origin: 50% 50%;
+  transform: rotateX(var(--phone-rx, 13deg)) rotateY(var(--phone-ry, -208deg)) rotateZ(var(--phone-rz, -8deg));
+}
+.phone-enabled .macbook-deck, .phone-enabled .macbook-lip { display: none; }
+.phone-enabled .phone-detail { display: block; }
+.phone-enabled .lid-front {
+  padding: 9px; border: 2px solid #adb0b8;
+  background: linear-gradient(var(--metal-angle, 125deg), #c9cbd0 0%, #51545b 9%, #0b0c10 22%, #191b21 76%, #a1a5ae);
+  box-shadow: inset 0 0 0 1px #060709, inset 0 0 0 3px #292c32, 0 22px 55px rgba(0,0,0,.48);
+}
+.phone-enabled .lid-back {
+  border: 1.5px solid #c4c7cd;
+  background:
+    radial-gradient(ellipse at 22% 8%, rgba(240,242,255,.28), transparent 58%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 .6px, transparent .6px 1.6px),
+    linear-gradient(var(--metal-angle, 125deg), #646974 0%, #999faa 28%, #7c828d 53%, #a5aab3 78%, #606670);
+  box-shadow: inset 0 0 0 2px rgba(235,240,255,.16), inset 0 -1px 9px rgba(0,0,0,.15);
+}
+.phone-enabled .back-wordmark {
+  font-size: 34px; font-weight: 500; color: rgba(30,36,46,.5);
+  text-shadow: 0 1px 0 rgba(245,249,255,.36);
+}
+/* Bande di antenna ripetute sul fianco per attraversare tutto lo spessore. */
+.phone-enabled .shell-slice::before,
+.phone-enabled .shell-slice::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 3px;
+  border-left: 2px solid #424751; border-right: 2px solid #424751;
+}
+.phone-enabled .shell-slice::before { top: 12%; }
+.phone-enabled .shell-slice::after { bottom: 12%; }
+
+/* Gruppo fotocamere sul piano posteriore: plate, barilotti, anelli, vetro. */
+.phone-enabled .camera-module {
+  position: absolute; top: 4.5%; left: 7%; width: 43%; aspect-ratio: 1;
+  transform-style: preserve-3d; transform: translateZ(2px);
+}
+.camera-plate {
+  position: absolute; inset: 0; border-radius: 25%; transform: translateZ(2px);
+  background: linear-gradient(135deg, #c4c9d0, #747c88 28%, #626a76 65%, #a3aab3);
+  box-shadow: 0 0 0 1px #505864, inset 0 0 0 1px rgba(255,255,255,.4), 2px 4px 0 #555e6b, 4px 7px 10px rgba(13,18,28,.38);
+}
+.camera-lens {
+  position: absolute; width: 37%; aspect-ratio: 1;
+  transform-style: preserve-3d; transform: translateZ(4px);
+}
+.lens-one { left: 8%; top: 7%; }
+.lens-two { left: 8%; bottom: 7%; }
+.lens-three { right: 7%; top: 32%; }
+.camera-lens i { position: absolute; border-radius: 50%; inset: 0; }
+.lens-barrel {
+  transform: translateZ(var(--barrel-z, 0px));
+  background: linear-gradient(var(--metal-angle, 125deg), #c4cad4, #414956 22%, #657181 65%, #252d39);
+  border: .7px solid #99a4b4;
+}
+.lens-ring {
+  transform: translateZ(3px);
+  background: conic-gradient(from 25deg, #252c35, #e1e6ed 12%, #626d7c 24%, #1a2029 45%, #c2c9d2 68%, #56606e 86%, #252c35);
+  box-shadow: 0 0 0 .8px #10141c;
+}
+.camera-lens .lens-glass {
+  inset: 11%; transform: translateZ(4px); border: 2px solid #0a0d15;
+  background:
+    radial-gradient(ellipse at 28% 22%, rgba(183,214,255,.75), transparent 19%),
+    radial-gradient(ellipse at 68% 78%, rgba(100,109,220,.65), transparent 22%),
+    radial-gradient(circle, #03050b 0 21%, #152849 23% 29%, #060b17 33% 48%, #26334c 51%, #070b14 64%);
+  box-shadow: inset 0 0 0 2px #121a29, 0 0 0 .5px #070a11;
+}
+.camera-flash {
+  position: absolute; width: 13%; aspect-ratio: 1; right: 19%; top: 10%;
+  border-radius: 50%; transform: translateZ(5px);
+  background: radial-gradient(circle at 36% 30%, #fffbe9, #e4dcc0 46%, #929594 53%, #646d79 65%);
+}
+.camera-lidar {
+  position: absolute; width: 12%; aspect-ratio: 1; right: 19%; bottom: 11%;
+  border-radius: 50%; transform: translateZ(5px); background: radial-gradient(circle, #152031, #03070e 60%, #586170 65%, #1f2633 78%);
+}
+.camera-mic { position: absolute; width: 3%; aspect-ratio: 1; right: 8%; bottom: 25%; border-radius: 50%; transform: translateZ(5px); background: #1d2735; }
+
+/* Pulsanti laterali: piani perpendicolari allo schermo, non disegni sul vetro. */
+.phone-enabled .hardware-button {
+  position: absolute; width: calc(var(--hardware-depth) + 2px); height: 43px;
+  left: calc(var(--hardware-depth) / -2 - 1px); top: 26%; border-radius: 4px;
+  transform: rotateY(90deg); border: 1px solid #535b68;
+  background: linear-gradient(90deg, #6e7786, #e2e6ec 18%, #828b99 45%, #424c5b 82%, #a4adba);
+  box-shadow: 0 0 0 1px #3a424e, inset 0 1px 1px #e8edf6;
+}
+.phone-enabled .button-action { top: 17%; height: 23px; }
+.phone-enabled .button-volume-down { top: 34%; }
+.phone-enabled .button-power { left: auto; right: calc(var(--hardware-depth) / -2 - 1px); top: 28%; height: 64px; }
+.phone-enabled .phone-bottom {
+  position: absolute; bottom: calc(var(--hardware-depth) / -2); left: 17%; width: 66%; height: var(--hardware-depth);
+  transform: rotateX(90deg); border-radius: 4px;
+  background: linear-gradient(#757f8f, #c2cad5 25%, #707b8d 65%, #3c4759);
+}
+.phone-bottom::before, .phone-bottom::after {
+  content: ""; position: absolute; top: 42%; height: 3px; width: 21%;
+  background: radial-gradient(circle, #161f2e 50%, transparent 60%) 0 0 / 6px 3px;
+}
+.phone-bottom::before { left: 7%; }
+.phone-bottom::after { right: 7%; }
+.phone-bottom span { position: absolute; top: 30%; left: 39%; width: 22%; height: 36%; border-radius: 4px; background: #1c2636; box-shadow: inset 0 0 0 1px #9aa7ba; }
+
+/* Vetro frontale e Dynamic Island. Nessun elemento copre i link. */
+.phone-enabled .macbook-screen {
+  isolation: isolate; border-radius: 39px; background: #060608;
+  box-shadow: 0 0 0 2px #030408, 0 0 0 3px rgba(255,255,255,.09);
+  --nav-h: 90px; --pad: clamp(16px, calc(var(--screen-width) * .055), 22px);
+}
+.phone-enabled .macbook-screen::before {
+  content: ""; position: absolute; inset: 0; z-index: 95; pointer-events: none;
+  background: #000; opacity: var(--screen-off, 1);
+}
+.phone-enabled .display-notch {
+  top: 22px; width: 30%; max-width: 115px; height: 25px; border-radius: 20px;
+  background: #020205; z-index: 105;
+  box-shadow: inset 0 0 0 .7px #22252b;
+}
+.phone-enabled .display-notch span {
+  position: absolute; width: 9px; height: 9px; right: 9px; top: 8px; margin: 0;
+  background: radial-gradient(circle at 40% 40%, #3f4b71, #0a1123 35%, #151d31 60%, #050812);
+  box-shadow: 0 0 0 1px #131824;
+}
+.phone-enabled .screen-viewport::after {
+  content: ""; position: absolute; left: 50%; bottom: 7px; z-index: 5;
+  width: 34%; height: 4px; border-radius: 3px; transform: translateX(-50%);
+  background: rgba(255,255,255,.8); pointer-events: none;
+}
+.phone-enabled .localnav { height: 90px; padding: 34px 0 0; background: rgba(6,6,8,.86); }
+.phone-enabled .localnav-inner { height: 55px; gap: 8px; padding: 0 var(--pad); }
+.phone-enabled .brand { font-size: clamp(.65rem, calc(var(--screen-width) * .039), .83rem); min-height: 44px; }
+.phone-enabled .narrow-screen .menu-btn { width: 44px; height: 44px; flex-basis: 44px; }
+.phone-enabled .narrow-screen .menu-btn span:first-child { top: 17px; }
+.phone-enabled .narrow-screen .menu-btn span:last-child { top: 25px; }
+.phone-enabled .narrow-screen .menu-btn[aria-expanded="true"] span { top: 21px; }
+.phone-enabled .narrow-screen #menu { top: 100%; padding: 8px var(--pad) 20px; }
+.phone-enabled .narrow-screen #menu.open { max-height: min(360px, var(--content-height)); overflow-y: auto; }
+.phone-enabled .hero { justify-content: flex-start; padding: 26px var(--pad) 28px; }
+.phone-enabled .wrap { padding-left: var(--pad); padding-right: var(--pad); }
+.phone-enabled .mega { font-size: clamp(2rem, calc(var(--screen-width) * .139), 4rem); }
+.phone-enabled .kicker { margin-bottom: 18px; font-size: .68rem; }
+.phone-enabled .hero-grid { margin-top: 28px; gap: 24px; padding-bottom: 0; }
+.phone-enabled .hero-roles li { font-size: 1rem; line-height: 1.35; }
+.phone-enabled .links { gap: 10px; }
+.phone-enabled .link { padding: 10px 12px; min-height: 46px; font-size: .86rem; }
+.phone-enabled .block { padding: 52px 0; }
+.phone-enabled .statement { font-size: clamp(1.5rem, calc(var(--screen-width) * .078), 2.2rem); }
+.phone-enabled .mega-sm { font-size: clamp(2.4rem, calc(var(--screen-width) * .14), 3.5rem); }
+.phone-enabled .carousel { padding-left: var(--pad); padding-right: var(--pad); scroll-padding-left: var(--pad); }
+.phone-enabled .project { flex-basis: calc(100% - 8px); }
+.phone-enabled .narrow-screen .contact-list a { gap: 8px; }
+.phone-enabled .contact-list strong { font-size: .83rem; }
+.phone-enabled .narrow-screen .contact-list span { width: auto; }
+.phone-enabled .screen-content footer { padding-bottom: 30px; }
+.phone-enabled .floor-shadow { left: 24%; width: 52%; top: 87%; height: 5%; filter: blur(18px); }
+.phone-enabled .intro-copy { top: 11%; }
+.phone-enabled .intro-subtitle { margin-top: 4px; }
+.phone-enabled .scroll-cue { bottom: 4%; }
+.phone-enabled .intro-topline { top: max(20px, env(safe-area-inset-top, 0px)); }
+
+/* Le nuove decorazioni non devono comparire nel fallback o in stampa. */
+html:not(.phone-enabled) .phone-detail { display: none; }
+@media print {
+  .hardware-shell, .phone-detail, .back-wordmark { display: none !important; }
+  .laptop-enabled .lid-front::before, .laptop-enabled .lid-front::after,
+  .phone-enabled .macbook-screen::before, .phone-enabled .screen-viewport::after { display: none !important; }
+}
+
+
+/* ===== Leggibilità e input: il portfolio diventa 2D dopo l'introduzione =====
+   La scocca 3D torna attiva scorrendo indietro nell'animazione.
+   Il contenuto finale evita il sorting fra piani 3D e lo scroll touch annidato. */
+.laptop-enabled .screen-content {
+  transform: translateY(calc(var(--site-shift, 0px) * -1));
+  will-change: auto;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .laptop-stage {
+  perspective: none;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .macbook {
+  transform: translateX(-50%); transform-style: flat; will-change: auto;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .macbook-lid {
+  transform: none; transform-style: flat; will-change: auto;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .lid-front {
+  transform: none; -webkit-backface-visibility: visible; backface-visibility: visible;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .hardware-shell,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .lid-back,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .hardware-button,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .phone-bottom,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .macbook-deck {
+  display: none;
+}
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .macbook-lip { transform: none; }
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .lid-front::before,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .lid-front::after,
+.laptop-enabled .laptop-experience[data-phase="portfolio"] .macbook-screen::after,
+.phone-enabled .laptop-experience[data-phase="portfolio"] .macbook-screen::before { display: none; }
+
+/* Il carosello accetta swipe orizzontali senza bloccare pagina e pinch-to-zoom. */
+.carousel-wrap { min-width: 0; }
+.carousel {
+  position: relative; width: 100%; min-width: 0;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+.carousel.carousel-ready { touch-action: pan-y pinch-zoom; }
+.carousel.dragging { scroll-snap-type: none; scroll-behavior: auto; cursor: grabbing; user-select: none; }
+.carousel .project, .carousel .p-shield { -webkit-user-drag: none; }
+.car-bar { min-width: 0; }
+.car-bar .progress { min-width: 0; }
+.car-ctrl { flex-shrink: 0; }
+.car-ctrl button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 48px; min-height: 48px; touch-action: manipulation;
+}
+.car-ctrl button:disabled { opacity: .4; cursor: default; }
+.laptop-enabled .narrow-screen .car-ctrl,
+.phone-enabled .car-ctrl { display: flex; gap: 8px; }
