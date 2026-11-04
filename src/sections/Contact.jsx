@@ -39,7 +39,7 @@ export default function Contact() {
         <a href={`mailto:${email}`}>
           <span className="contact-email-text">
           <span className="contact-email-label">
-           CONTACT ME TO:
+           LET'S TALK:
           </span>
 
           <strong className="contact-email-address">

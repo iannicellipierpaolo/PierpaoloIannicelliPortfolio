@@ -32,6 +32,6 @@ export const navigation = [
   {
     id: 'contact',
     number: '04',
-    label: 'Contattami',
+    label: 'CONTACT ME ',
   },
 ];

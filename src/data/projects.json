@@ -1,7 +1,7 @@
 [
   {
     "id": "project-001",
-    "name": "Trattoria del Sole - Trebisacce (CS)",
+    "name": "Trattoria del Sole",
     "category": "Ristorazione",
     "screenshot": "assets/projects/demo-01.webp",
     "url": "https://iannicellipierpaolo.github.io/TrattoriaDelSole/",
@@ -12,8 +12,8 @@
   },
   {
     "id": "project-002",
-    "name": "Mortati dal 1987 - Castrovillari (CS)",
-    "category": "Filiera",
+    "name": "Mortati",
+    "category": "Gastronomia e ristorazione",
     "screenshot": "assets/projects/demo-02.webp",
     "url": "https://iannicellipierpaolo.github.io/Mortati-dal-1987/",
     "status": "demo",
@@ -23,8 +23,8 @@
   },
   {
     "id": "project-003",
-    "name": "Dante - Osteria tipica Calabrese - Corigliano Rossano (CS)",
-    "category": "demo",
+    "name": "Dante",
+    "category": "Ristorazione",
     "screenshot": "assets/projects/demo-03.webp",
     "url": "https://iannicellipierpaolo.github.io/Dante-Osteria.tipica.calabrese/",
     "status": "demo",
@@ -34,8 +34,8 @@
   },
   {
     "id": "project-004",
-    "name": "Kamastra Ristorante - Civita (CS)",
-    "category": "demo",
+    "name": "Kamastra",
+    "category": "Ristorazione",
     "screenshot": "assets/projects/demo-04.webp",
     "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
     "status": "demo",
