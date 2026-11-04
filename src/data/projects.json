@@ -1,0 +1,46 @@
+[
+  {
+    "id": "project-001",
+    "name": "Progetto 001",
+    "category": "Da configurare",
+    "screenshot": "",
+    "url": "",
+    "status": "placeholder",
+    "featured": true,
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "project-002",
+    "name": "Progetto 002",
+    "category": "Da configurare",
+    "screenshot": "",
+    "url": "",
+    "status": "placeholder",
+    "featured": true,
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "project-003",
+    "name": "Progetto 003",
+    "category": "Da configurare",
+    "screenshot": "",
+    "url": "",
+    "status": "placeholder",
+    "featured": true,
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "project-004",
+    "name": "Progetto 004",
+    "category": "Da configurare",
+    "screenshot": "",
+    "url": "",
+    "status": "placeholder",
+    "featured": true,
+    "order": 4,
+    "visible": true
+  }
+]

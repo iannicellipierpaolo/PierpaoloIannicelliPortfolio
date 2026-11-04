@@ -1,0 +1,978 @@
+@media (min-width: 1800px) {
+  .hero {
+    padding-top: 145px;
+  }
+  .hero-index {
+    padding-bottom: 100px;
+  }
+  .hero-bottom {
+    margin-top: 15px;
+  }
+  .process-panel {
+    padding-block: 40px;
+  }
+  .surface-content {
+    min-height: 330px;
+  }
+  .mini-content {
+    min-height: 260px;
+  }
+  .system-diagram {
+    min-height: 330px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .site-header {
+    gap: 22px;
+    padding-inline: 3%;
+  }
+  .header-role {
+    font-size: 9px;
+    padding-left: 20px;
+  }
+  .header-role span {
+    padding-inline: 8px;
+  }
+  .desktop-nav {
+    gap: 18px;
+  }
+  .desktop-nav button {
+    font-size: 10px;
+  }
+  .hero {
+    min-height: 690px;
+    padding-top: 95px;
+  }
+  .hero-details {
+    padding-left: 25px;
+  }
+  .hero-index {
+    padding-bottom: 52px;
+  }
+  .hero-description {
+    padding-left: 20px;
+  }
+  .skill-tags {
+    gap: 12px;
+    margin-bottom: 34px;
+  }
+  .hero-bottom {
+    margin-top: 28px;
+  }
+  .process-heading {
+    padding-inline: 6%;
+    grid-template-columns: 66% 34%;
+  }
+  .process-intro {
+    padding-left: 20px;
+  }
+  .process-panel {
+    padding: 25px 6% 20px;
+    border-radius: 27px;
+  }
+  .surface-content {
+    grid-template-columns: 16% 84%;
+  }
+  .surface-labels {
+    font-size: 7px;
+  }
+  .surface-labels li {
+    padding-left: 7px;
+  }
+  .system-diagram {
+    grid-template-columns: minmax(0, 1fr) 22px 30%;
+  }
+  .system-modules li {
+    padding: 8px 5px;
+    gap: 5px;
+    font-size: 8px;
+  }
+  .module-icon {
+    font-size: 16px;
+    width: 16px;
+  }
+  .system-modules small {
+    font-size: 6px;
+  }
+  .process-bottom {
+    font-size: 8px;
+  }
+  .mode-switch {
+    width: 340px;
+    font-size: 10px;
+    padding-inline: 22px;
+  }
+  .contact {
+    min-height: 660px;
+  }
+}
+
+@media (max-width: 999px) {
+  :root {
+    --header-height: 72px;
+  }
+  .header-role {
+    font-size: 11px;
+  }
+  .site-header {
+    padding-inline: 5%;
+  }
+  .brand {
+    font-size: 25px;
+  }
+  .desktop-nav {
+    display: none;
+  }
+  .menu-toggle {
+    margin-left: auto;
+  }
+  .hero {
+    min-height: 820px;
+    padding: 90px 7% 80px;
+  }
+  .hero-layout {
+    grid-template-columns: 58% 42%;
+  }
+  .hero-title {
+    font-size: 11.6vw;
+    padding-top: 30px;
+  }
+  .hero-title .interface-mask {
+    width: 125%;
+  }
+  .hero-details {
+    padding-left: 25px;
+  }
+  .hero-index {
+    padding-bottom: 35px;
+  }
+  .hero-description h2 {
+    font-size: 18px;
+  }
+  .hero-description p {
+    font-size: 11px;
+  }
+  .skill-tags {
+    margin-top: 28px;
+    font-size: 9px;
+    gap: 10px;
+  }
+  .skill-tags li {
+    gap: 6px;
+  }
+  .portrait {
+    margin-right: 0;
+    margin-top: 90px;
+  }
+  .portrait figcaption {
+    position: static;
+    margin-top: 10px;
+    text-align: right;
+  }
+  .hero-bottom {
+    margin-top: 35px;
+    grid-template-columns: 62% 25% 13%;
+  }
+  .hero-bottom-note {
+    display: none;
+  }
+  .hero .planet {
+    left: 30%;
+    top: 12%;
+    width: 170vw;
+    height: 170vw;
+  }
+  .hero .orbit-one {
+    width: 135vw;
+    height: 160vw;
+    left: 28%;
+  }
+  .technical-frame i {
+    border-width: 4px 0 0 4px;
+  }
+  .process {
+    padding: 65px 6% 80px;
+  }
+  .process-heading {
+    display: block;
+    padding: 0 0 35px;
+  }
+  .process-title {
+    font-size: 8.2vw;
+  }
+  .process-intro {
+    margin: 30px 0 0 auto;
+    width: 48%;
+  }
+  .process-intro h3 {
+    font-size: 19px;
+  }
+  .process-intro p {
+    font-size: 11px;
+  }
+  .process-panels {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .process-panel {
+    padding: 32px 7% 30px;
+  }
+  .process-panel h3 {
+    font-size: 6.5vw;
+  }
+  .panel-description {
+    font-size: 13px;
+  }
+  .surface-content {
+    grid-template-columns: 23% 77%;
+    min-height: 300px;
+  }
+  .surface-labels {
+    font-size: 10px;
+  }
+  .mini-device {
+    max-width: 490px;
+  }
+  .mini-header .brand {
+    font-size: 12px;
+  }
+  .mini-content {
+    padding: 28px;
+    min-height: 250px;
+  }
+  .mini-content h4 {
+    font-size: 40px;
+  }
+  .mini-kicker {
+    font-size: 7px;
+  }
+  .mini-cta {
+    font-size: 9px;
+    min-height: 40px;
+  }
+  .mini-menu button {
+    font-size: 12px;
+  }
+  .xray-control-wrap {
+    position: relative;
+    grid-row: 2;
+    left: auto;
+    top: auto;
+    transform: none;
+    justify-self: center;
+    margin: -8px 0;
+  }
+  .xray-control {
+    width: 85px;
+    height: 85px;
+  }
+  .xray-ring {
+    inset: -10px;
+  }
+  .ring-b {
+    inset: -20px;
+  }
+  .system-panel {
+    grid-row: 3;
+  }
+  .system-diagram {
+    grid-template-columns: minmax(0, 1fr) 55px 29%;
+    min-height: 290px;
+  }
+  .code-window {
+    padding: 15px 20px;
+  }
+  .code-window pre {
+    font-size: 12px;
+  }
+  .code-window-label {
+    font-size: 10px;
+  }
+  .system-modules {
+    gap: 12px;
+  }
+  .system-modules li {
+    font-size: 12px;
+    padding: 10px;
+    gap: 13px;
+  }
+  .system-modules small {
+    font-size: 8px;
+  }
+  .module-icon {
+    font-size: 25px;
+    width: 25px;
+  }
+  .event-readout {
+    font-size: 10px;
+  }
+  .xray-bridge {
+    display: none;
+  }
+  .demo-hint {
+    font-size: 10px;
+  }
+  .process-bottom {
+    justify-content: center;
+    padding-top: 30px;
+  }
+  .process-bottom > span {
+    display: none;
+  }
+  .mode-switch {
+    width: 400px;
+    font-size: 12px;
+  }
+  .work-section {
+    padding: 70px 6%;
+  }
+  .work-heading p {
+    font-size: 11px;
+  }
+  .project-caption {
+    align-items: start;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .project-pending,
+  .project-link {
+    margin-left: 34px;
+  }
+  .project-name h3 {
+    font-size: 19px;
+  }
+  .project-grid {
+    gap: 36px 20px;
+  }
+  .placeholder-top {
+    font-size: 6px;
+  }
+  .placeholder-bottom {
+    font-size: 7px;
+  }
+  .project-badge {
+    top: 40px;
+    font-size: 7px;
+  }
+  .contact {
+    min-height: 650px;
+    padding: 60px 8% 70px;
+  }
+  .contact h2 {
+    font-size: 11vw;
+    margin-top: 110px;
+  }
+  .contact-impact {
+    margin-top: 30px;
+  }
+  .contact-orbital .planet {
+    width: 95vw;
+    height: 95vw;
+    left: 35%;
+    top: 10%;
+  }
+  .contact-orbital .orbit-one {
+    width: 90vw;
+    height: 115vw;
+    left: 38%;
+  }
+  .contact-orbital .orbit-two {
+    width: 90vw;
+    height: 100vw;
+    left: 30%;
+  }
+  .site-footer {
+    padding: 35px 6%;
+  }
+  .site-footer .brand {
+    font-size: 19px;
+  }
+  .site-footer p {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --header-height: 65px;
+  }
+  .site-header {
+    padding-inline: 6%;
+  }
+  .site-header .brand {
+    font-size: 23px;
+  }
+  .brand sup {
+    font-size: 9px;
+    margin-left: 3px;
+  }
+  .header-role {
+    display: none;
+  }
+  .menu-panel {
+    padding: 25px;
+  }
+  .menu-panel > button {
+    font-size: 29px;
+    padding-block: 23px;
+  }
+  .menu-signature {
+    font-size: 10px;
+  }
+  .hero {
+    min-height: 0;
+    padding: 77px 8% 70px;
+  }
+  .technical-frame {
+    inset: 19px 4% 25px;
+  }
+  .technical-frame i {
+    width: 36px;
+    height: 36px;
+    border-width: 3px 0 0 3px;
+  }
+  .hero-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-title {
+    padding-top: 0;
+    font-size: 16.1vw;
+    line-height: 0.91;
+    letter-spacing: -0.075em;
+  }
+  .hero-title .interface-mask {
+    width: 107%;
+    margin-top: 8px;
+  }
+  .hero-title .interface-mask em {
+    font-size: 0.87em;
+  }
+  .hero-title::before {
+    left: -12px;
+    bottom: 0;
+    opacity: 0.6;
+  }
+  .hero-details {
+    padding: 34px 0 0;
+  }
+  .hero-index {
+    position: absolute;
+    top: -257px;
+    right: 0;
+    font-size: 9px;
+    padding: 0;
+  }
+  .hero-description {
+    padding-left: 16px;
+    max-width: 100%;
+  }
+  .hero-description h2 {
+    font-size: 19px;
+    line-height: 1.2;
+  }
+  .hero-description p {
+    font-size: 11px;
+    line-height: 1.65;
+    margin-top: 12px;
+  }
+  .skill-tags {
+    margin: 24px 0;
+    gap: 11px 14px;
+    font-size: 9px;
+  }
+  .skill-tags li::before,
+  .skill-tags li::after {
+    height: 13px;
+    width: 4px;
+  }
+  .portrait {
+    margin: 24px 22px 0 0;
+  }
+  .portrait figcaption {
+    position: absolute;
+    top: auto;
+    bottom: -19px;
+    right: -18px;
+    font-size: 9px;
+  }
+  .hero-details .dot-field {
+    position: absolute;
+    right: 0;
+    bottom: -40px;
+    width: 40%;
+    height: 20px;
+    background-size: 12px 12px;
+    margin: 0;
+  }
+  .hero-bottom {
+    margin-top: 58px;
+    grid-template-columns: 1fr 55px;
+    gap: 25px;
+  }
+  .explore-label {
+    font-size: 10px;
+    gap: 16px;
+  }
+  .circle-arrow {
+    width: 46px;
+    height: 46px;
+  }
+  .circle-arrow svg {
+    width: 21px;
+    height: 21px;
+  }
+  .hero .planet {
+    top: 11%;
+    left: 22%;
+    width: 230vw;
+    height: 270vw;
+    opacity: 0.75;
+  }
+  .hero .orbit-one {
+    top: 2%;
+    left: 13%;
+    width: 220vw;
+    height: 250vw;
+    transform: rotate(-25deg);
+  }
+  .orbit-one i {
+    width: 7px;
+    height: 7px;
+  }
+  .hero .orbit-two {
+    left: -170%;
+    top: 68%;
+    width: 250vw;
+    height: 220vw;
+  }
+  .cross-one {
+    top: 33%;
+    right: 6%;
+    font-size: 25px;
+  }
+  .cross-two {
+    display: none;
+  }
+  .process {
+    padding: 70px 6% 65px;
+  }
+  .process-heading {
+    padding: 0 2% 28px;
+  }
+  .eyebrow,
+  .section-meta {
+    font-size: 9px;
+  }
+  .process .process-title {
+    font-size: 10vw;
+    line-height: 0.95;
+  }
+  .process-intro {
+    width: auto;
+    margin-top: 25px;
+    padding-left: 15px;
+  }
+  .process-intro h3 {
+    font-size: 17px;
+  }
+  .process-intro p {
+    font-size: 10px;
+  }
+  .process-panels {
+    gap: 25px;
+  }
+  .process-panel {
+    padding: 24px 6% 22px;
+    border-radius: 24px;
+  }
+  .panel-index {
+    font-size: 10px;
+    margin-bottom: 17px;
+  }
+  .panel-index .arrow-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .process-panel h3 {
+    font-size: 8vw;
+    letter-spacing: -0.065em;
+  }
+  .panel-description {
+    font-size: 9px;
+    white-space: normal;
+  }
+  .surface-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-top: 15px;
+  }
+  .surface-labels {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 5px 9px;
+    margin-bottom: 25px;
+    font-size: 7px;
+  }
+  .surface-labels li {
+    padding: 3px 0 3px 6px;
+  }
+  .mini-device {
+    width: 96%;
+    transform: perspective(1000px) rotateY(-6deg) rotateZ(-3deg);
+  }
+  .mini-device.is-inspecting {
+    transform: none;
+  }
+  .mini-header {
+    padding: 8px 12px;
+  }
+  .mini-header .brand {
+    font-size: 10px;
+  }
+  .mini-menu-button {
+    width: 38px;
+    height: 38px;
+  }
+  .mini-content {
+    padding: 23px 17px;
+    min-height: 210px;
+  }
+  .mini-content h4 {
+    font-size: 32px;
+  }
+  .mini-kicker {
+    font-size: 5.5px;
+  }
+  .mini-cta {
+    font-size: 7px;
+    min-height: 40px;
+    margin-top: 24px;
+  }
+  .mini-menu {
+    top: 55px;
+  }
+  .mini-menu button {
+    font-size: 10px;
+  }
+  .demo-hint {
+    font-size: 7px;
+    margin-top: 23px;
+    justify-content: center;
+    gap: 8px;
+  }
+  .xray-control {
+    width: 74px;
+    height: 74px;
+    font-size: 11px;
+  }
+  .xray-control-wrap {
+    margin: 0;
+  }
+  .system-diagram {
+    grid-template-columns: minmax(0, 1fr) 18px 30%;
+    margin-top: 25px;
+    min-height: 0;
+  }
+  .code-window {
+    padding: 10px 7px;
+  }
+  .code-window pre {
+    font-size: 7px;
+    line-height: 2;
+  }
+  .line-number {
+    width: 15px;
+  }
+  .code-window-label {
+    font-size: 6px;
+    gap: 5px;
+  }
+  .system-modules {
+    gap: 9px;
+  }
+  .system-modules li {
+    font-size: 7px;
+    gap: 5px;
+    padding: 6px 4px;
+    border-radius: 6px;
+  }
+  .system-modules small {
+    font-size: 5px;
+  }
+  .module-icon {
+    width: 14px;
+    font-size: 15px;
+  }
+  .event-readout {
+    font-size: 7px;
+    margin-top: 20px;
+    gap: 7px;
+    line-height: 1.7;
+  }
+  .mode-switch {
+    width: 100%;
+    font-size: 10px;
+    padding: 9px 20px;
+    gap: 12px;
+    min-height: 54px;
+  }
+  .mode-switch > span {
+    gap: 8px;
+  }
+  .mode-switch i {
+    width: 57px;
+  }
+  .mode-switch[aria-pressed='true'] b {
+    transform: translateX(25px);
+  }
+  .work-section {
+    padding: 65px 7% 70px;
+  }
+  .work-heading {
+    flex-direction: column;
+    align-items: start;
+    margin: 35px 0 35px;
+    gap: 24px;
+  }
+  .section-title {
+    font-size: 15vw;
+  }
+  .work-heading p {
+    font-size: 10px;
+  }
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .project-preview {
+    aspect-ratio: 1.5;
+  }
+  .project-placeholder {
+    padding: 18px;
+  }
+  .placeholder-top,
+  .placeholder-bottom {
+    font-size: 7px;
+  }
+  .placeholder-number {
+    font-size: 110px;
+  }
+  .project-badge {
+    font-size: 7px;
+  }
+  .project-caption {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  .project-name {
+    gap: 10px;
+  }
+  .project-name h3 {
+    font-size: 17px;
+  }
+  .project-name > span {
+    font-size: 9px;
+  }
+  .project-pending,
+  .project-link {
+    font-size: 6px;
+    margin-left: 0;
+    gap: 5px;
+  }
+  .project-category {
+    margin-left: 29px;
+    font-size: 8px;
+  }
+  .archive-link {
+    font-size: 11px;
+    margin-top: 40px;
+    padding-block: 22px;
+  }
+  .archive-link small {
+    display: block;
+    margin: 10px 0 0;
+    font-size: 8px;
+  }
+  .archive-link svg {
+    width: 22px;
+    height: 22px;
+  }
+  .contact {
+    padding: 50px 8% 60px;
+    min-height: 560px;
+  }
+  .contact .technical-frame {
+    inset: 22px 4% 25px;
+  }
+  .contact .technical-frame i {
+    width: 31px;
+    height: 31px;
+  }
+  .contact .section-meta {
+    font-size: 8px;
+  }
+  .contact h2 {
+    margin: 90px 0 45px;
+    font-size: 16vw;
+    line-height: 0.95;
+  }
+  .contact h2 em {
+    white-space: normal;
+    font-size: 0.79em;
+    max-width: 100%;
+  }
+  .contact-impact {
+    margin-top: 24px;
+  }
+  .contact-impact em > span {
+    display: block;
+  }
+  .contact-action a,
+  .email-pending {
+    font-size: 12px;
+    padding-top: 18px;
+  }
+  .email-pending small {
+    display: block;
+    margin: 9px 0 0;
+    font-size: 7px;
+  }
+  .contact-action svg {
+    width: 22px;
+    height: 22px;
+  }
+  .contact-orbital .planet {
+    width: 150vw;
+    height: 180vw;
+    top: 4%;
+    left: 22%;
+  }
+  .contact-orbital .orbit-one {
+    width: 160vw;
+    height: 210vw;
+    left: 23%;
+    top: -5%;
+  }
+  .contact-orbital .orbit-two {
+    width: 150vw;
+    height: 190vw;
+    left: 20%;
+    top: 19%;
+  }
+  .contact-orbital .planet::before {
+    background-size: 9px 9px;
+  }
+  .site-footer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 26px 15px;
+    padding: 28px 7%;
+  }
+  .site-footer .brand {
+    font-size: 18px;
+  }
+  .site-footer > .brand-link {
+    text-align: left;
+  }
+  .site-footer p {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: left;
+  }
+  .back-to-top {
+    font-size: 7px;
+    gap: 8px;
+  }
+  .back-to-top svg {
+    width: 16px;
+    height: 16px;
+  }
+  .archive-page {
+    padding: 40px 7% 70px;
+  }
+  .archive-page .section-meta {
+    flex-wrap: wrap;
+    margin-bottom: 45px;
+    gap: 15px;
+  }
+  .archive-description {
+    font-size: 10px;
+  }
+  .archive-empty {
+    padding-block: 35px;
+    margin-top: 40px;
+  }
+  .archive-empty h2 {
+    font-size: 29px;
+  }
+  .archive-empty p,
+  .archive-empty a {
+    font-size: 10px;
+  }
+  .archive-filters {
+    align-items: start;
+    gap: 20px;
+    font-size: 9px;
+  }
+  .archive-filters label {
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+  }
+  .archive-filters > span {
+    margin: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-index {
+    top: -235px;
+  }
+  .process-panel h3 {
+    font-size: 7.7vw;
+  }
+  .mode-switch {
+    padding-inline: 12px;
+  }
+  .system-modules li {
+    font-size: 6px;
+  }
+  .module-icon {
+    display: none;
+  }
+  .mini-content h4 {
+    font-size: 28px;
+  }
+  .project-caption {
+    flex-direction: column;
+    align-items: start;
+  }
+  .project-pending,
+  .project-link {
+    margin-left: 29px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .mini-device {
+    transform: none;
+  }
+  .portrait-scan {
+    display: none;
+  }
+}
