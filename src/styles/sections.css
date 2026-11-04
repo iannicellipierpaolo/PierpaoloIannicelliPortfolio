@@ -1120,3 +1120,34 @@
 .archive-filters > span {
   margin-left: auto;
 }
+
+/* CONTACT - EMAIL VISIBILE */
+
+.contact-email-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.contact-email-label {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.contact-email-address {
+  font-size: clamp(16px, 2vw, 27px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.contact-action a .contact-email-address {
+  transition: opacity 0.25s ease;
+}
+
+.contact-action a:hover .contact-email-address {
+  opacity: 0.7;
+}

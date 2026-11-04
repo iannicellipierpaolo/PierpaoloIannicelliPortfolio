@@ -87,7 +87,7 @@ export default function SurfaceSystem() {
             />
           </div>
           <p className="demo-hint">
-            DEMO INTERATTIVA <span>↗ Prova menu e pulsante</span>
+            CLICK & INTERACT <span>↗</span>
           </p>
         </article>
         <div className="xray-control-wrap">

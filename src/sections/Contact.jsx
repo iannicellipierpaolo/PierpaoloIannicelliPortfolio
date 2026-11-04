@@ -35,13 +35,25 @@ export default function Contact() {
         </h2>
         <div className="contact-action">
           {email ? (
-            <a href={`mailto:${email}`}>
-              WRITE ME AN EMAIL <Arrow diagonal />
-            </a>
+           
+        <a href={`mailto:${email}`}>
+          <span className="contact-email-text">
+          <span className="contact-email-label">
+           CONTACT ME TO:
+          </span>
+
+          <strong className="contact-email-address">
+            {email}
+          </strong>
+        </span>
+
+          <Arrow diagonal />
+        </a>
+
           ) : (
             <div className="email-pending">
               <span>
-                WRITE ME AN EMAIL <small>INDIRIZZO IN ARRIVO</small>
+                WRITE ME AN EMAIL <small>iannicellipierpaolo@gmail.com</small>
               </span>
               <Arrow diagonal />
             </div>
