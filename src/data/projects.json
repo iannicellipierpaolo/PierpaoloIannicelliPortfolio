@@ -34,13 +34,24 @@
   },
   {
     "id": "project-004",
-    "name": "Kamastra",
+    "name": "Alice Restaurant",
     "category": "Ristorazione",
     "screenshot": "assets/projects/demo-04.webp",
-    "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
+    "url": "https://iannicellipierpaolo.github.io/AliceRestaurant/",
     "status": "demo",
     "featured": true,
     "order": 4,
     "visible": true
-  }
+  },
+  {
+  "id": "progetto-005",
+  "name": "Kamastra",
+  "category": "Ristorazione",
+  "screenshot": "assets/projects/demo-05.webp",
+  "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
+  "status": "demo",
+  "featured": false,
+  "order": 5,
+  "visible": true
+}
 ]
