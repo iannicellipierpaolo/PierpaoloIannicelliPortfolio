@@ -17,7 +17,7 @@
     "screenshot": "assets/projects/demo-02.webp",
     "url": "https://iannicellipierpaolo.github.io/Mortati-dal-1987/",
     "status": "demo",
-    "featured": true,
+    "featured": false,
     "order": 2,
     "visible": true
   },
@@ -50,7 +50,7 @@
   "screenshot": "assets/projects/demo-05.webp",
   "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
   "status": "demo",
-  "featured": false,
+  "featured": true,
   "order": 5,
   "visible": true
 }
