@@ -85,14 +85,17 @@
 }
 .portrait {
   position: relative;
-  margin-right: 6%;
+  width: min(100%, 360px);
+  margin: 18px 45px 0 auto;
 }
 .portrait-image {
   position: relative;
   border: 1px solid #f0ede4aa;
   overflow: hidden;
   background: var(--black);
+  aspect-ratio: 1.12 / 1;
 }
+
 .portrait-image::after {
   content: '';
   position: absolute;
@@ -101,13 +104,16 @@
   background-size: 3px 3px;
   pointer-events: none;
 }
+
 .portrait img {
+  display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 3.33;
+  height: 100%;
   object-fit: cover;
+  object-position: 80% 46%;
   filter: grayscale(1) contrast(1.05);
 }
+
 .portrait figcaption {
   position: absolute;
   right: -53px;

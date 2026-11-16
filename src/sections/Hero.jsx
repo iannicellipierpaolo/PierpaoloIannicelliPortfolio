@@ -57,8 +57,8 @@ export default function Hero() {
               <img
                 src={assetUrl(site.portrait)}
                 alt={site.portraitAlt}
-                width="700"
-                height="210"
+                width="1254"
+                height="1254"
                 fetchPriority="high"
               />
               <span className="portrait-scan" aria-hidden="true" />

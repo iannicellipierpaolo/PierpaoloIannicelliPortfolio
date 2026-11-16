@@ -109,6 +109,18 @@
 }
 
 @media (max-width: 999px) {
+  .portrait {
+  width: min(100%, 320px);
+  margin: 56px 0 0 auto;
+}
+
+.portrait-image {
+  aspect-ratio: 1.05 / 1;
+}
+
+.portrait img {
+  object-position: 80% 46%;
+}
   :root {
     --header-height: 72px;
   }
@@ -394,6 +406,24 @@
 }
 
 @media (max-width: 600px) {
+.portrait {
+  width: min(100%, 255px);
+  margin: 24px 0 0 auto;
+}
+
+.portrait-image {
+  aspect-ratio: 1 / 1.04;
+}
+
+.portrait img {
+  object-position: 80% 46%;
+}
+
+.portrait img {
+  aspect-ratio: 1.6 / 1;
+  object-position: center 48%;
+}
+
   :root {
     --header-height: 65px;
   }
