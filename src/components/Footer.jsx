@@ -1,15 +1,15 @@
-import { Brand, Arrow } from './Graphics';
-import useSectionNavigation from '../hooks/useSectionNavigation';
+import { Brand, Arrow } from "./Graphics";
+import useSectionNavigation from "../hooks/useSectionNavigation";
 
 export default function Footer() {
-  const { goTo } = useSectionNavigation();
+  const { goTo } = useSectionNavigation({ trackActive: false });
 
   return (
     <footer className="site-footer">
       <button
         className="brand-link"
         aria-label="Torna all’inizio"
-        onClick={() => goTo('home')}
+        onClick={() => goTo("home")}
       >
         <Brand small />
       </button>
@@ -18,7 +18,7 @@ export default function Footer() {
         <br />
         <span>PI® / WEB DEVELOPER</span>
       </p>
-      <button className="back-to-top" onClick={() => goTo('home')}>
+      <button className="back-to-top" onClick={() => goTo("home")}>
         BACK TO TOP <Arrow />
       </button>
     </footer>

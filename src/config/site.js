@@ -1,37 +1,34 @@
-
 export const site = {
-  name: 'Pierpaolo Iannicelli',
-  brand: 'BUILT DIFFERENT.',
-  role: 'Web Developer',
+  name: "Pierpaolo Iannicelli",
+  brand: "BUILT DIFFERENT.",
+  role: "Web Developer",
 
+  email: "iannicellipierpaolo@gmail.com",
 
-  email: 'iannicellipierpaolo@gmail.com',
+  portrait: "assets/portrait.webp",
 
-  portrait: 'assets/portrait.webp',
-
-  portraitAlt:
-    'Details photo',
+  portraitAlt: "Ritratto in bianco e nero di Pierpaolo Iannicelli",
 };
 
 export const navigation = [
   {
-    id: 'home',
-    number: '01',
-    label: 'WHO I AM',
+    id: "home",
+    number: "01",
+    label: "WHO I AM",
   },
   {
-    id: 'process',
-    number: '02',
-    label: 'WHAT I DO',
+    id: "process",
+    number: "02",
+    label: "WHAT I DO",
   },
   {
-    id: 'work',
-    number: '03',
-    label: 'PORTFOLIO',
+    id: "work",
+    number: "03",
+    label: "PORTFOLIO",
   },
   {
-    id: 'contact',
-    number: '04',
-    label: 'CONTACT ME ',
+    id: "contact",
+    number: "04",
+    label: "CONTACT ME",
   },
 ];

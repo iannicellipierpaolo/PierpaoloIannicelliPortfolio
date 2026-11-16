@@ -1,9 +1,19 @@
-import { Arrow, OrbitalBackground, TechnicalFrame } from '../components/Graphics';
-import { site } from '../config/site';
-import { assetUrl } from '../data/project-utils';
-import { scrollToSection } from '../hooks/useSectionNavigation';
+import {
+  Arrow,
+  OrbitalBackground,
+  TechnicalFrame,
+} from "../components/Graphics";
+import { site } from "../config/site";
+import { assetUrl } from "../data/project-utils";
+import { scrollToSection } from "../hooks/useSectionNavigation";
 
-const skills = ['FRONTEND', 'BACKEND', 'INTEGRATIONS', 'CMS / E-COMMERCE', 'DEPLOY'];
+const skills = [
+  "FRONTEND",
+  "BACKEND",
+  "INTEGRATIONS",
+  "CMS / E-COMMERCE",
+  "DEPLOY",
+];
 
 export default function Hero() {
   return (
@@ -44,7 +54,8 @@ export default function Hero() {
             </h2>
             <p>
               Sviluppo esperienze e soluzioni web,
-              <br className="desktop-break" /> dall’interfaccia alla messa online.
+              <br className="desktop-break" /> dall’interfaccia alla messa
+              online.
             </p>
           </div>
           <ul className="skill-tags hero-reveal">
@@ -52,7 +63,7 @@ export default function Hero() {
               <li key={skill}>{skill}</li>
             ))}
           </ul>
-          <figure className="portrait hero-reveal">
+          <figure className="portrait">
             <div className="portrait-image">
               <img
                 src={assetUrl(site.portrait)}
@@ -60,6 +71,7 @@ export default function Hero() {
                 width="1254"
                 height="1254"
                 fetchPriority="high"
+                decoding="async"
               />
               <span className="portrait-scan" aria-hidden="true" />
             </div>
@@ -71,14 +83,14 @@ export default function Hero() {
       <div className="hero-bottom hero-reveal">
         <button
           className="explore-label"
-          onClick={() => scrollToSection('process', true)}
+          onClick={() => scrollToSection("process", true)}
         >
           SCROLL TO EXPLORE <span />
         </button>
         <button
           className="circle-arrow"
           aria-label="Esplora Surface e System"
-          onClick={() => scrollToSection('process', true)}
+          onClick={() => scrollToSection("process", true)}
         >
           <Arrow />
         </button>

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { Brand, Arrow } from './Graphics';
-import { navigation } from '../config/site';
-import useSectionNavigation from '../hooks/useSectionNavigation';
+import { useEffect, useRef, useState } from "react";
+import { Brand, Arrow } from "./Graphics";
+import { navigation } from "../config/site";
+import useSectionNavigation from "../hooks/useSectionNavigation";
 
 export default function Header() {
   const { active, goTo } = useSectionNavigation();
@@ -11,15 +11,25 @@ export default function Header() {
 
   useEffect(() => {
     if (!open) return;
-    panel.current?.querySelector('button')?.focus();
+    panel.current?.querySelector("button")?.focus();
+    const background = [...document.querySelectorAll("main, .site-footer")];
+    const previousInert = background.map((element) => element.inert);
+    const previousOverflow = document.body.style.overflow;
+    background.forEach((element) => {
+      element.inert = true;
+    });
+    document.body.style.overflow = "hidden";
 
     const onKey = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setOpen(false);
         toggle.current?.focus();
       }
-      if (event.key === 'Tab') {
-        const items = [toggle.current, ...panel.current.querySelectorAll('button')];
+      if (event.key === "Tab") {
+        const items = [
+          toggle.current,
+          ...panel.current.querySelectorAll("button"),
+        ];
         const first = items[0];
         const last = items.at(-1);
         if (event.shiftKey && document.activeElement === first) {
@@ -32,8 +42,14 @@ export default function Header() {
       }
     };
 
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      background.forEach((element, index) => {
+        element.inert = previousInert[index];
+      });
+      document.body.style.overflow = previousOverflow;
+    };
   }, [open]);
 
   function visit(id) {
@@ -48,7 +64,7 @@ export default function Header() {
         href="#main"
         onClick={(event) => {
           event.preventDefault();
-          document.getElementById('main')?.focus();
+          document.getElementById("main")?.focus();
         }}
       >
         Vai al contenuto
@@ -57,7 +73,7 @@ export default function Header() {
         <button
           className="brand-link"
           aria-label="BUILT DIFFERENT — torna alla home"
-          onClick={() => visit('home')}
+          onClick={() => visit("home")}
         >
           <Brand />
         </button>
@@ -69,7 +85,7 @@ export default function Header() {
             <button
               key={item.id}
               onClick={() => visit(item.id)}
-              aria-current={active === item.id ? 'location' : undefined}
+              aria-current={active === item.id ? "location" : undefined}
             >
               <span>{item.number}</span> {item.label}
             </button>
@@ -77,9 +93,9 @@ export default function Header() {
         </nav>
         <button
           ref={toggle}
-          className={`menu-toggle ${open ? 'is-open' : ''}`}
+          className={`menu-toggle ${open ? "is-open" : ""}`}
           onClick={() => setOpen(!open)}
-          aria-label={open ? 'Chiudi menu' : 'Apri menu'}
+          aria-label={open ? "Chiudi menu" : "Apri menu"}
           aria-expanded={open}
           aria-controls="global-menu"
         >
@@ -107,7 +123,7 @@ export default function Header() {
               <button
                 key={item.id}
                 onClick={() => visit(item.id)}
-                aria-current={active === item.id ? 'location' : undefined}
+                aria-current={active === item.id ? "location" : undefined}
               >
                 <span>{item.number}</span>
                 {item.label}

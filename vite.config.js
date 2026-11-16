@@ -1,22 +1,18 @@
-
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  base: '/PierpaoloIannicelliPortfolio/',
+  base: "/PierpaoloIannicelliPortfolio/",
 
   server: {
-    allowedHosts: ['terminal.local'],
+    allowedHosts: ["terminal.local"],
   },
 
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
 
   build: {
-    target: 'es2022',
+    target: "es2022",
     sourcemap: false,
   },
 });

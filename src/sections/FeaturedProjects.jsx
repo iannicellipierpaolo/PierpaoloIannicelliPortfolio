@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import ProjectCard from '../components/ProjectCard';
-import { Arrow } from '../components/Graphics';
-import projects from '../data/projects.json';
-import { getProjectGroups } from '../data/project-utils';
+import { Link } from "react-router-dom";
+import ProjectCard from "../components/ProjectCard";
+import { Arrow } from "../components/Graphics";
+import projects from "../data/projects.json";
+import { getProjectGroups } from "../data/project-utils";
 
 export default function FeaturedProjects() {
   const { featured, archive } = getProjectGroups(projects);
@@ -17,7 +17,7 @@ export default function FeaturedProjects() {
     >
       <div className="section-meta flex justify-between gap-6">
         <span>03 / SELECTED WORK</span>
-        <span>CURATED INDEX / {String(featured.length).padStart(2, '0')}</span>
+        <span>CURATED INDEX / {String(featured.length).padStart(2, "0")}</span>
       </div>
       <div className="work-heading">
         <h2 className="section-title" id="work-title">
@@ -38,8 +38,10 @@ export default function FeaturedProjects() {
       </div>
       <Link to="/archive" className="archive-link">
         <span>
-          EXPLORE ALL PROJECTS{' '}
-          <small>[ {String(archive.length).padStart(2, '0')} IN ARCHIVE ]</small>
+          EXPLORE ALL PROJECTS{" "}
+          <small>
+            [ {String(archive.length).padStart(2, "0")} IN ARCHIVE ]
+          </small>
         </span>
         <Arrow diagonal />
       </Link>

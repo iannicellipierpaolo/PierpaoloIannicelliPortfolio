@@ -1,6 +1,6 @@
-import { useId } from 'react';
+import { assetUrl } from "../data/project-utils";
 
-export function Arrow({ diagonal = false, className = '' }) {
+export function Arrow({ diagonal = false, className = "" }) {
   return (
     <svg
       className={`arrow-icon ${className}`}
@@ -28,25 +28,15 @@ export function TechnicalFrame() {
   );
 }
 
-export function OrbitalBackground({ variant = '' }) {
-  const noiseId = useId().replaceAll(':', '');
-
+export function OrbitalBackground({ variant = "" }) {
   return (
     <div className={`orbital-scene ${variant}`} aria-hidden="true">
       <div className="orbital-drift">
         <div className="planet">
-          <svg className="planet-noise" width="100%" height="100%">
-            <filter id={noiseId}>
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.64"
-                numOctaves="3"
-                stitchTiles="stitch"
-              />
-              <feColorMatrix type="saturate" values="0" />
-            </filter>
-            <rect width="100%" height="100%" filter={`url(#${noiseId})`} />
-          </svg>
+          <div
+            className="planet-noise"
+            style={{ backgroundImage: `url(${assetUrl("assets/grain.webp")})` }}
+          />
         </div>
         <div className="orbit orbit-one">
           <i />
@@ -59,7 +49,7 @@ export function OrbitalBackground({ variant = '' }) {
 
 export function Brand({ small = false }) {
   return (
-    <span className={`brand ${small ? 'brand-small' : ''}`}>
+    <span className={`brand ${small ? "brand-small" : ""}`}>
       BUILT <em>DIFFERENT.</em>
       <sup>®</sup>
     </span>

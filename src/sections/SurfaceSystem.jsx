@@ -1,26 +1,34 @@
-import { useState } from 'react';
-import { Arrow, OrbitalBackground, TechnicalFrame } from '../components/Graphics';
-import MiniDemo from '../components/MiniDemo';
-import SystemDiagram from '../components/SystemDiagram';
+import { useState } from "react";
+import {
+  Arrow,
+  OrbitalBackground,
+  TechnicalFrame,
+} from "../components/Graphics";
+import MiniDemo from "../components/MiniDemo";
+import SystemDiagram from "../components/SystemDiagram";
 
 export default function SurfaceSystem() {
   const [xray, setXray] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [view, setView] = useState('experience');
-  const [activeModule, setActiveModule] = useState('menu');
-  const [lastEvent, setLastEvent] = useState('Pronto. Apri il menu o cambia la vista.');
+  const [view, setView] = useState("experience");
+  const [activeModule, setActiveModule] = useState("menu");
+  const [lastEvent, setLastEvent] = useState(
+    "Pronto. Apri il menu o cambia la vista.",
+  );
 
   function toggleMenu() {
     const next = !menuOpen;
     setMenuOpen(next);
-    setActiveModule('menu');
-    setLastEvent(`onClick → setMenuOpen(${next}) → Menu ${next ? 'aperto' : 'chiuso'}`);
+    setActiveModule("menu");
+    setLastEvent(
+      `onClick → setMenuOpen(${next}) → Menu ${next ? "aperto" : "chiuso"}`,
+    );
   }
 
   function changeView(next) {
     setView(next);
     setMenuOpen(false);
-    setActiveModule('view');
+    setActiveModule("view");
     setLastEvent(`onClick → setView('${next}') → Hero aggiornato`);
   }
 
@@ -29,7 +37,7 @@ export default function SurfaceSystem() {
       id="process"
       data-main-section
       tabIndex="-1"
-      className={`process framed-section ${xray ? 'xray-on' : ''}`}
+      className={`process framed-section ${xray ? "xray-on" : ""}`}
       aria-labelledby="process-title"
     >
       <OrbitalBackground variant="process-orbital" />
@@ -72,8 +80,12 @@ export default function SurfaceSystem() {
           </p>
           <div className="surface-content">
             <ul className="surface-labels" aria-label="Ambiti dell’interfaccia">
-              <li className={activeModule === 'menu' ? 'selected' : ''}>UI / UX</li>
-              <li className={activeModule === 'view' ? 'selected' : ''}>INTERACTION</li>
+              <li className={activeModule === "menu" ? "selected" : ""}>
+                UI / UX
+              </li>
+              <li className={activeModule === "view" ? "selected" : ""}>
+                INTERACTION
+              </li>
               <li>RESPONSIVE</li>
               <li>ANIMATION</li>
             </ul>
@@ -104,7 +116,7 @@ export default function SurfaceSystem() {
               <br />
               MODE
             </span>
-            <small>{xray ? 'ON' : 'OFF'}</small>
+            <small>{xray ? "ON" : "OFF"}</small>
           </button>
         </div>
         <article className="system-panel process-panel">

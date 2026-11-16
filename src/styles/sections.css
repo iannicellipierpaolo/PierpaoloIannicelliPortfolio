@@ -10,7 +10,7 @@
 }
 .hero-title {
   font-size: clamp(90px, 11.8vw, 204px);
-  font-weight: 950;
+  font-weight: 900;
   letter-spacing: -0.078em;
   line-height: 0.88;
   position: relative;
@@ -28,7 +28,7 @@
   padding: 0 0.08em 0.08em 0;
 }
 .hero-title::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -28px;
   top: 5px;
@@ -72,7 +72,7 @@
 }
 .skill-tags li::before,
 .skill-tags li::after {
-  content: '';
+  content: "";
   width: 5px;
   height: 15px;
   border: 1px solid var(--orange);
@@ -97,7 +97,7 @@
 }
 
 .portrait-image::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-image: radial-gradient(#10101099 0.6px, transparent 0.7px);
@@ -243,7 +243,11 @@
   color: var(--black);
   background: var(--ivory);
   border: 1px solid #fff9;
-  background-image: radial-gradient(ellipse at 70% 90%, #d8c7b788, transparent 65%);
+  background-image: radial-gradient(
+    ellipse at 70% 90%,
+    #d8c7b788,
+    transparent 65%
+  );
 }
 .system-panel {
   border: 1px solid var(--orange);
@@ -402,13 +406,18 @@
   width: 380px;
   height: 330px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 25% 20%, #888875, #292929 25%, #131313 60%);
+  background: radial-gradient(
+    ellipse at 25% 20%,
+    #888875,
+    #292929 25%,
+    #131313 60%
+  );
   left: 45%;
   top: 0;
   transform: rotate(-30deg);
 }
 .mini-planet::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -529,7 +538,7 @@
 }
 .system-links::before,
 .system-links::after {
-  content: '';
+  content: "";
   position: absolute;
   height: 1px;
   width: 100%;
@@ -632,12 +641,12 @@
   color: var(--orange);
   letter-spacing: 0.18em;
 }
-.xray-control[aria-pressed='true'] {
+.xray-control[aria-pressed="true"] {
   background: var(--orange);
   color: var(--black);
   box-shadow: 0 0 35px #ff4d2588;
 }
-.xray-control[aria-pressed='true'] small {
+.xray-control[aria-pressed="true"] small {
   color: var(--black);
 }
 .xray-control:hover {
@@ -724,7 +733,7 @@
   box-shadow: 0 0 12px #ff4d2588;
   transition: transform 250ms;
 }
-.mode-switch[aria-pressed='true'] b {
+.mode-switch[aria-pressed="true"] b {
   transform: translateX(37px);
 }
 
@@ -822,7 +831,7 @@
   top: 40%;
 }
 .project-placeholder::before {
-  content: '';
+  content: "";
   width: 75%;
   aspect-ratio: 1;
   border: 1px solid #ff4d2555;
@@ -867,7 +876,9 @@
   border-radius: 50%;
   opacity: 0;
   transform: translate(-5px, 5px);
-  transition: 220ms;
+  transition:
+    opacity 220ms,
+    transform 220ms;
 }
 .project-preview:hover .preview-visit,
 .project-preview:focus-visible .preview-visit {
@@ -1135,6 +1146,7 @@
   align-items: flex-start;
   gap: 8px;
   min-width: 0;
+  flex: 1;
 }
 
 .contact-email-label {

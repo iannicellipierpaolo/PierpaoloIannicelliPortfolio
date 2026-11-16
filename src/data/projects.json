@@ -44,14 +44,14 @@
     "visible": true
   },
   {
-  "id": "progetto-005",
-  "name": "Kamastra",
-  "category": "Ristorazione",
-  "screenshot": "assets/projects/demo-05.webp",
-  "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
-  "status": "demo",
-  "featured": true,
-  "order": 5,
-  "visible": true
-}
+    "id": "progetto-005",
+    "name": "Kamastra",
+    "category": "Ristorazione",
+    "screenshot": "assets/projects/demo-05.webp",
+    "url": "https://iannicellipierpaolo.github.io/Kamastra-demo/",
+    "status": "demo",
+    "featured": true,
+    "order": 5,
+    "visible": true
+  }
 ]

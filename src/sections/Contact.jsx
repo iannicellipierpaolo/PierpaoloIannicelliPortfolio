@@ -1,5 +1,9 @@
-import { Arrow, OrbitalBackground, TechnicalFrame } from '../components/Graphics';
-import { site } from '../config/site';
+import {
+  Arrow,
+  OrbitalBackground,
+  TechnicalFrame,
+} from "../components/Graphics";
+import { site } from "../config/site";
 
 export default function Contact() {
   const email = site.email.trim();
@@ -35,21 +39,15 @@ export default function Contact() {
         </h2>
         <div className="contact-action">
           {email ? (
-           
-        <a href={`mailto:${email}`}>
-          <span className="contact-email-text">
-          <span className="contact-email-label">
-           LET'S TALK:
-          </span>
+            <a href={`mailto:${email}`}>
+              <span className="contact-email-text">
+                <span className="contact-email-label">LET'S TALK:</span>
 
-          <strong className="contact-email-address">
-            {email}
-          </strong>
-        </span>
+                <strong className="contact-email-address">{email}</strong>
+              </span>
 
-          <Arrow diagonal />
-        </a>
-
+              <Arrow diagonal />
+            </a>
           ) : (
             <div className="email-pending">
               <span>

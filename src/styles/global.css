@@ -1,21 +1,21 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @font-face {
-  font-family: 'Inter Variable';
+  font-family: "Inter Variable";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
-    format('woff2');
+  src: url("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2")
+    format("woff2");
 }
 
 @font-face {
-  font-family: 'Inter Variable';
+  font-family: "Inter Variable";
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url('@fontsource-variable/inter/files/inter-latin-wght-italic.woff2')
-    format('woff2');
+  src: url("@fontsource-variable/inter/files/inter-latin-wght-italic.woff2")
+    format("woff2");
 }
 
 :root {
@@ -25,8 +25,8 @@
   --orange: #ff4d25;
   --gray: #777772;
   --line: #f0ede433;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Inter Variable', Arial, sans-serif;
+  --mono: "IBM Plex Mono", monospace;
+  --sans: "Inter Variable", Arial, sans-serif;
   --header-height: 84px;
   font-family: var(--sans);
   color: var(--ivory);
@@ -41,6 +41,7 @@
 }
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
   scroll-padding-top: var(--header-height);
 }
 body {
@@ -181,7 +182,7 @@ main {
   white-space: nowrap;
   display: inline-block;
   font-size: clamp(21px, 1.95vw, 32px);
-  font-weight: 950;
+  font-weight: 900;
   letter-spacing: -0.065em;
   line-height: 1;
 }
@@ -220,7 +221,7 @@ main {
   white-space: nowrap;
 }
 .desktop-nav button::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 23px;
   height: 3px;
@@ -267,6 +268,9 @@ main {
   z-index: 49;
 }
 .menu-panel {
+  max-height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 42px;
   margin-left: auto;
   width: min(620px, 100%);
@@ -375,7 +379,7 @@ main {
   overflow: hidden;
 }
 .planet::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   opacity: 0.06;
@@ -387,6 +391,9 @@ main {
   );
 }
 .planet-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   opacity: 0.6;
   mix-blend-mode: soft-light;
 }
@@ -465,20 +472,4 @@ main {
 .back-to-top svg {
   transform: rotate(180deg);
   width: 20px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .planet-noise {
-    animation: texture-drift 100s ease-in-out infinite alternate;
-    transform-origin: center;
-  }
-}
-
-@keyframes texture-drift {
-  from {
-    transform: rotate(-2deg) scale(1.06);
-  }
-  to {
-    transform: rotate(2deg) scale(1.1);
-  }
 }

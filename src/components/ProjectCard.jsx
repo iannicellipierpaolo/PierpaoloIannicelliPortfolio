@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { Arrow } from './Graphics';
-import { assetUrl, safeProjectUrl } from '../data/project-utils';
+import { useState } from "react";
+import { Arrow } from "./Graphics";
+import { assetUrl, safeProjectUrl } from "../data/project-utils";
 
 export default function ProjectCard({ project, index, compact = false }) {
   const [failed, setFailed] = useState(false);
   const url = safeProjectUrl(project.url);
-  const number = String(index + 1).padStart(3, '0');
+  const number = String(index + 1).padStart(3, "0");
   const labels = {
-    placeholder: 'SEGNAPOSTO',
-    demo: 'DEMO / CONCEPT',
-    real: 'PROGETTO',
+    placeholder: "SEGNAPOSTO",
+    demo: "DEMO / CONCEPT",
+    real: "PROGETTO",
   };
   const preview = (
     <>
@@ -18,8 +18,9 @@ export default function ProjectCard({ project, index, compact = false }) {
           src={assetUrl(project.screenshot)}
           alt={`Anteprima del sito ${project.name}`}
           loading="lazy"
-          width="1200"
-          height="750"
+          width="1600"
+          height="1000"
+          decoding="async"
           onError={() => setFailed(true)}
         />
       ) : (
@@ -41,7 +42,7 @@ export default function ProjectCard({ project, index, compact = false }) {
         </div>
       )}
       <span className="project-badge">
-        {labels[project.status] || 'DEMO / CONCEPT'}
+        {labels[project.status] || "DEMO / CONCEPT"}
       </span>
       {url && (
         <span className="preview-visit">
@@ -52,7 +53,7 @@ export default function ProjectCard({ project, index, compact = false }) {
   );
 
   return (
-    <article className={`project-card ${compact ? 'compact' : ''}`}>
+    <article className={`project-card ${compact ? "compact" : ""}`}>
       {url ? (
         <a
           className="project-preview"
