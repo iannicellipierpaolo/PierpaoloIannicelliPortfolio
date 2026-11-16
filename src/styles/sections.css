@@ -86,7 +86,7 @@
 .portrait {
   position: relative;
   width: min(100%, 360px);
-  margin: 18px 45px 0 auto;
+  margin: 18px 60px 0 auto;
 }
 .portrait-image {
   position: relative;
